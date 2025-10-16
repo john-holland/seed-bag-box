@@ -1,0 +1,477 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Seed Box Bag Box - Subscription service for bag cleaning, seed collection, and crop growing
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: provided.al2023
+    Architectures:
+      - arm64
+    Environment:
+      Variables:
+        RUST_LOG: info
+        BAGS_TABLE: !Ref BagsTable
+        SEEDS_TABLE: !Ref SeedsTable
+        SUBSCRIPTIONS_TABLE: !Ref SubscriptionsTable
+        SHIPMENTS_TABLE: !Ref ShipmentsTable
+        GREENHOUSE_ZONES_TABLE: !Ref GreenhouseZonesTable
+        PLANTS_TABLE: !Ref PlantsTable
+
+Resources:
+  # API Gateway
+  SeedBoxApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,Authorization'"
+        AllowOrigin: "'*'"
+
+  # Lambda Functions
+  SubscriptionServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./target/lambda/subscription-service/
+      Handler: bootstrap
+      Events:
+        CreateSubscription:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /subscriptions
+            Method: POST
+        GetSubscription:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /subscriptions/{id}
+            Method: GET
+        UpdateSubscription:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /subscriptions/{id}
+            Method: PUT
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SubscriptionsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref CustomersTable
+
+  ShippingServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./target/lambda/shipping-service/
+      Handler: bootstrap
+      Environment:
+        Variables:
+          SHIPSTATION_API_KEY: '{{resolve:secretsmanager:seed-box/shipstation:SecretString:api_key}}'
+          SHIPSTATION_API_SECRET: '{{resolve:secretsmanager:seed-box/shipstation:SecretString:api_secret}}'
+      Events:
+        CreateShipment:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /shipments
+            Method: POST
+        GetPackagingInstructions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /shipments/packaging-instructions
+            Method: GET
+        ShipStationWebhook:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /shipments/webhook
+            Method: POST
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ShipmentsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SubscriptionsTable
+
+  InventoryServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./target/lambda/inventory-service/
+      Handler: bootstrap
+      Events:
+        ReceiveBag:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /inventory/bags
+            Method: POST
+        RegisterSeed:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /inventory/seeds
+            Method: POST
+        ListBags:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /inventory/bags
+            Method: GET
+        ListSeeds:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /inventory/seeds
+            Method: GET
+        GetSummary:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /inventory/summary
+            Method: GET
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BagsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SeedsTable
+
+  GreenhouseServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./target/lambda/greenhouse-service/
+      Handler: bootstrap
+      Events:
+        CreateZone:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /greenhouse/zones
+            Method: POST
+        PlantSeed:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /greenhouse/plants
+            Method: POST
+        InitiateQuarantine:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /greenhouse/quarantine
+            Method: POST
+        ListZones:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /greenhouse/zones
+            Method: GET
+        ListPlants:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /greenhouse/plants
+            Method: GET
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref GreenhouseZonesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PlantsTable
+
+  PlantProcessingServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./target/lambda/plant-processing-service/
+      Handler: bootstrap
+      Events:
+        GetProcessingGuide:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /processing/guides
+            Method: GET
+        GetCuringProtocol:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /processing/curing-protocols
+            Method: GET
+        GetRecipes:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /processing/recipes
+            Method: GET
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref ProcessingGuidesTable
+
+  GerminationServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./target/lambda/germination-service/
+      Handler: bootstrap
+      Events:
+        StartGermination:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /germination/start
+            Method: POST
+        RecordObservation:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /germination/observe
+            Method: POST
+        UpdatePhase:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /germination/phase
+            Method: PUT
+        PrepareShipment:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /germination/shipment
+            Method: POST
+        ListReady:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /germination/ready
+            Method: GET
+        GetRecord:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /germination/{id}
+            Method: GET
+        GetGuide:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SeedBoxApi
+            Path: /germination/guide/{species}
+            Method: GET
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref GerminationRecordsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref GerminationGuidesTable
+
+  # DynamoDB Tables
+  BagsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: seed-box-bags
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: status
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: status-index
+          KeySchema:
+            - AttributeName: status
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  SeedsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: seed-box-seeds
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: status
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: status-index
+          KeySchema:
+            - AttributeName: status
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  SubscriptionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: seed-box-subscriptions
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: customer_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: customer-index
+          KeySchema:
+            - AttributeName: customer_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  CustomersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: seed-box-customers
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: email
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: email-index
+          KeySchema:
+            - AttributeName: email
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  ShipmentsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: seed-box-shipments
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: customer_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: customer-index
+          KeySchema:
+            - AttributeName: customer_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  GreenhouseZonesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: seed-box-greenhouse-zones
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+
+  PlantsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: seed-box-plants
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: zone_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: zone-index
+          KeySchema:
+            - AttributeName: zone_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  ProcessingGuidesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: seed-box-processing-guides
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: species
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: species-index
+          KeySchema:
+            - AttributeName: species
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  GerminationRecordsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: seed-box-germination-records
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: customer_id
+          AttributeType: S
+        - AttributeName: phase
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: customer-index
+          KeySchema:
+            - AttributeName: customer_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: phase-index
+          KeySchema:
+            - AttributeName: phase
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  GerminationGuidesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: seed-box-germination-guides
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: species
+          AttributeType: S
+      KeySchema:
+        - AttributeName: species
+          KeyType: HASH
+
+Outputs:
+  ApiEndpoint:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${SeedBoxApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
+  
+  SubscriptionServiceFunction:
+    Description: "Subscription Service Lambda Function ARN"
+    Value: !GetAtt SubscriptionServiceFunction.Arn
+  
+  ShippingServiceFunction:
+    Description: "Shipping Service Lambda Function ARN"
+    Value: !GetAtt ShippingServiceFunction.Arn
+

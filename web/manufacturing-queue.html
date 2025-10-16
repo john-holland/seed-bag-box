@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📦 Manufacturing Queue - Seed Box Bag Box</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.8;
+        }
+
+        /* SCANNER INPUT SECTION - OPTIMIZED FOR BARCODE GUNS 🦇 */
+        .scanner-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .scanner-label {
+            color: #1e3c72;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: block;
+            text-align: center;
+        }
+
+        /* AUTO-FOCUS INPUT - GIANT SIZE FOR VISIBILITY */
+        #scanInput {
+            width: 100%;
+            padding: 25px;
+            font-size: 2em;
+            font-family: 'Courier New', monospace;
+            border: 4px solid #2a5298;
+            border-radius: 10px;
+            background: #fff;
+            color: #000;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        #scanInput:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+            background: #f0fff0;
+        }
+
+        #scanInput::placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* VISUAL FEEDBACK */
+        .scan-feedback {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2em;
+            min-height: 30px;
+        }
+
+        .scan-feedback.success {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .scan-feedback.error {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        /* BEEP ANIMATION */
+        @keyframes beep {
+            0%, 100% { background: #fff; }
+            50% { background: #4CAF50; }
+        }
+
+        .beeping {
+            animation: beep 0.3s ease-in-out 2;
+        }
+
+        /* RECENT SCANS */
+        .recent-scans {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .recent-scans h2 {
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .scan-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 5px solid #4CAF50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .scan-item .code {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .scan-item .type {
+            background: #4CAF50;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .scan-item .timestamp {
+            opacity: 0.7;
+            font-size: 0.9em;
+        }
+
+        /* ACTION BUTTONS */
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 20px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        /* STATS */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.2em;
+            opacity: 0.8;
+        }
+
+        /* HIDDEN AUDIO FOR BEEP */
+        audio {
+            display: none;
+        }
+
+        /* SCANNER STATUS INDICATOR */
+        .scanner-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            background: #4CAF50;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .scanner-status::before {
+            content: "🔫 ";
+        }
+    </style>
+</head>
+<body>
+    <div class="scanner-status">Scanner Ready</div>
+
+    <div class="container">
+        <header>
+            <h1>📦 Manufacturing Queue</h1>
+            <div class="subtitle">🦇 Seed Box Bag Box 🕷️ - Scanner Gun Interface</div>
+        </header>
+
+        <!-- SCANNER INPUT SECTION -->
+        <div class="scanner-section">
+            <label class="scanner-label" for="scanInput">
+                🔫 SCAN BARCODE OR ENTER CODE
+            </label>
+            <input 
+                type="text" 
+                id="scanInput" 
+                placeholder="Ready to scan... (auto-focused)"
+                autocomplete="off"
+                spellcheck="false"
+            >
+            <div id="scanFeedback" class="scan-feedback"></div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="scanCount">0</div>
+                <div class="stat-label">Scans Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="queueCount">0</div>
+                <div class="stat-label">In Queue</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="storageCount">0</div>
+                <div class="stat-label">In Storage</div>
+            </div>
+        </div>
+
+        <!-- RECENT SCANS -->
+        <div class="recent-scans">
+            <h2>📋 Recent Scans</h2>
+            <div id="recentScans">
+                <p style="opacity: 0.5; text-align: center;">No scans yet. Scan a barcode to get started!</p>
+            </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="actions">
+            <button class="btn btn-primary" onclick="processSeed()">
+                🌱 Process Seed
+            </button>
+            <button class="btn btn-secondary" onclick="storeSeed()">
+                🧊 Cold Storage
+            </button>
+            <button class="btn btn-warning" onclick="quarantine()">
+                ⚠️ Quarantine
+            </button>
+            <button class="btn btn-danger" onclick="clearScans()">
+                🗑️ Clear List
+            </button>
+        </div>
+    </div>
+
+    <!-- BEEP SOUND -->
+    <audio id="beepSound">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZSSA=" type="audio/wav">
+    </audio>
+
+    <script>
+        // 🦇 AUTO-FOCUS ON PAGE LOAD
+        window.addEventListener('load', () => {
+            const input = document.getElementById('scanInput');
+            input.focus();
+            
+            // Re-focus if user clicks away (keep scanner active)
+            document.addEventListener('click', (e) => {
+                if (e.target !== input) {
+                    setTimeout(() => input.focus(), 100);
+                }
+            });
+
+            // Re-focus on any body click
+            document.body.addEventListener('click', () => {
+                setTimeout(() => input.focus(), 10);
+            });
+        });
+
+        // Scanner configuration
+        let scanBuffer = '';
+        let scanTimeout = null;
+        let recentScans = [];
+        let scanCountToday = 0;
+
+        const scanInput = document.getElementById('scanInput');
+        const scanFeedback = document.getElementById('scanFeedback');
+        const recentScansDiv = document.getElementById('recentScans');
+        const beepSound = document.getElementById('beepSound');
+
+        // 🦇 HANDLE SCANNER INPUT (PASTE AND KEYPRESS)
+        scanInput.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            processScan(pastedText.trim());
+        });
+
+        // Handle Enter key (most scanners append Enter/Return)
+        scanInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const scannedValue = scanInput.value.trim();
+                if (scannedValue) {
+                    processScan(scannedValue);
+                }
+            }
+        });
+
+        // Auto-submit after rapid typing (scanner guns type FAST)
+        scanInput.addEventListener('input', (e) => {
+            clearTimeout(scanTimeout);
+            
+            // If input is rapid (scanner), auto-submit after 100ms
+            scanTimeout = setTimeout(() => {
+                const value = scanInput.value.trim();
+                if (value.length > 3) { // Minimum barcode length
+                    processScan(value);
+                }
+            }, 100);
+        });
+
+        function processScan(code) {
+            // Clear input
+            scanInput.value = '';
+            
+            // Validate code
+            if (!code || code.length < 3) {
+                showFeedback('Invalid code', 'error');
+                return;
+            }
+
+            // Determine type based on prefix or length
+            const type = detectCodeType(code);
+            
+            // Play beep
+            playBeep();
+            
+            // Visual feedback
+            scanInput.classList.add('beeping');
+            setTimeout(() => scanInput.classList.remove('beeping'), 300);
+            
+            // Add to recent scans
+            addRecentScan(code, type);
+            
+            // Update stats
+            updateStats();
+            
+            // Show success
+            showFeedback(`✅ Scanned: ${code} (${type})`, 'success');
+            
+            // API call would go here
+            sendToAPI(code, type);
+            
+            // Re-focus
+            setTimeout(() => scanInput.focus(), 50);
+        }
+
+        function detectCodeType(code) {
+            // Detect based on patterns
+            if (code.startsWith('SEED-')) return 'Seed';
+            if (code.startsWith('BAG-')) return 'Bag';
+            if (code.startsWith('ZONE-')) return 'Zone';
+            if (code.startsWith('PLANT-')) return 'Plant';
+            if (code.length === 12 || code.length === 13) return 'UPC';
+            if (code.match(/^[0-9A-F]{8}-[0-9A-F]{4}/i)) return 'UUID';
+            return 'Unknown';
+        }
+
+        function addRecentScan(code, type) {
+            const timestamp = new Date().toLocaleTimeString();
+            const scan = { code, type, timestamp };
+            
+            recentScans.unshift(scan);
+            if (recentScans.length > 10) recentScans.pop();
+            
+            renderRecentScans();
+            scanCountToday++;
+        }
+
+        function renderRecentScans() {
+            if (recentScans.length === 0) {
+                recentScansDiv.innerHTML = '<p style="opacity: 0.5; text-align: center;">No scans yet.</p>';
+                return;
+            }
+            
+            recentScansDiv.innerHTML = recentScans.map(scan => `
+                <div class="scan-item">
+                    <div>
+                        <div class="code">${scan.code}</div>
+                        <div class="timestamp">${scan.timestamp}</div>
+                    </div>
+                    <div class="type">${scan.type}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('scanCount').textContent = scanCountToday;
+            document.getElementById('queueCount').textContent = Math.floor(Math.random() * 50); // Mock
+            document.getElementById('storageCount').textContent = Math.floor(Math.random() * 200); // Mock
+        }
+
+        function showFeedback(message, type) {
+            scanFeedback.textContent = message;
+            scanFeedback.className = `scan-feedback ${type}`;
+            
+            setTimeout(() => {
+                scanFeedback.textContent = '';
+                scanFeedback.className = 'scan-feedback';
+            }, 3000);
+        }
+
+        function playBeep() {
+            beepSound.currentTime = 0;
+            beepSound.play().catch(() => {}); // Ignore if autoplay blocked
+        }
+
+        async function sendToAPI(code, type) {
+            console.log('Sending to API:', { code, type });
+            
+            try {
+                // Using local mock server (run with: cd mock-server && cargo run)
+                const response = await fetch('http://localhost:3000/api/scan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        code, 
+                        type, 
+                        timestamp: new Date().toISOString() 
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('API Response:', data);
+                    return data;
+                }
+            } catch (error) {
+                console.error('API Error:', error);
+                console.log('💡 Start mock server: cd mock-server && cargo run');
+            }
+        }
+
+        // ACTION BUTTONS
+        function processSeed() {
+            alert('🌱 Process Seed workflow would start here');
+        }
+
+        function storeSeed() {
+            alert('🧊 Cold Storage workflow would start here');
+        }
+
+        function quarantine() {
+            alert('⚠️ Quarantine workflow would start here');
+        }
+
+        function clearScans() {
+            if (confirm('Clear all recent scans?')) {
+                recentScans = [];
+                renderRecentScans();
+                showFeedback('Cleared!', 'success');
+            }
+        }
+
+        // Keep focus on input at all times
+        setInterval(() => {
+            if (document.activeElement !== scanInput) {
+                scanInput.focus();
+            }
+        }, 1000);
+
+        // Prevent accidental navigation
+        window.addEventListener('beforeunload', (e) => {
+            if (recentScans.length > 0) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+</body>
+</html>
+

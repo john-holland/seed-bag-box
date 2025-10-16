@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📷 My Images - Seed Box Bag Box</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --light-green: #C8E6C9;
+            --dark-green: #4CAF50;
+            --eggshell: #F5F5DC;
+            --white: #FFFFFF;
+            --light-blue: #B3E5FC;
+            --aqua: #00BCD4;
+            --teal: #009688;
+            --teal-dark: #00796B;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--eggshell) 0%, var(--light-green) 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .paper {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: var(--teal-dark);
+            font-weight: 300;
+        }
+
+        .upload-section {
+            padding: 40px;
+            border: 3px dashed var(--teal);
+            border-radius: 8px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--eggshell) 0%, var(--light-blue) 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .upload-section:hover {
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--light-blue) 100%);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-size: 1.3em;
+            color: var(--teal-dark);
+            margin-bottom: 10px;
+        }
+
+        .upload-hint {
+            color: var(--dark-green);
+        }
+
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .image-card {
+            border: 3px solid var(--teal);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .image-info {
+            padding: 15px;
+            background: var(--white);
+        }
+
+        .image-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: var(--white);
+        }
+
+        .btn-audit {
+            background: var(--aqua);
+            color: var(--white);
+        }
+
+        .audit-log-box {
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--eggshell);
+            border-left: 4px solid var(--teal);
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: var(--teal-dark);
+            line-height: 1.6;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .audit-log-box .audit-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--teal);
+        }
+
+        .audit-log-box .audit-item:last-child {
+            border-bottom: none;
+        }
+
+        .audit-action {
+            font-weight: 600;
+            color: var(--teal-dark);
+        }
+
+        .audit-time {
+            font-size: 0.9em;
+            color: var(--aqua);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status-pending {
+            background: #FFC107;
+            color: #333;
+        }
+
+        .status-approved {
+            background: var(--dark-green);
+            color: var(--white);
+        }
+
+        .status-rejected {
+            background: #f44336;
+            color: var(--white);
+        }
+
+        .deleted-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📷 My Images</h1>
+        </div>
+
+        <div class="paper">
+            <div class="upload-section" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📸</div>
+                <div class="upload-text">Upload Plant Photo</div>
+                <div class="upload-hint">Click to select an image (JPG, PNG, max 5MB)</div>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" onchange="handleFileSelect(event)">
+        </div>
+
+        <div class="paper">
+            <h2 style="margin-bottom: 20px; color: var(--teal-dark);">Your Uploaded Images</h2>
+            <div class="images-grid" id="myImages">
+                <!-- Images will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        // Mock user images
+        const mockImages = [
+            {
+                id: 'img-user-001',
+                filename: 'my-tomato.jpg',
+                s3_url: 'https://via.placeholder.com/400x300/C8E6C9/009688?text=My+Tomato',
+                caption: 'My first true leaf!',
+                uploaded_at: '2025-10-16T10:30:00Z',
+                moderation_status: 'APPROVED'
+            },
+            {
+                id: 'img-user-002',
+                filename: 'basil-sprout.jpg',
+                s3_url: 'https://via.placeholder.com/400x300/B3E5FC/0288D1?text=Basil+Sprout',
+                caption: 'Basil looking good',
+                uploaded_at: '2025-10-16T11:00:00Z',
+                moderation_status: 'PENDING'
+            }
+        ];
+
+        window.addEventListener('load', () => {
+            loadMyImages();
+        });
+
+        function loadMyImages() {
+            const container = document.getElementById('myImages');
+            
+            if (mockImages.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--teal-dark);">No images uploaded yet. Upload your first plant photo!</div>';
+                return;
+            }
+
+            container.innerHTML = mockImages.map(img => `
+                <div class="image-card" id="card-${img.id}">
+                    <img src="${img.s3_url}" alt="${img.filename}" class="image-preview">
+                    <div class="image-info">
+                        <div style="font-weight: 600; color: var(--teal-dark);">${img.filename}</div>
+                        <div style="font-size: 0.9em; color: var(--dark-green); margin-top: 5px;">
+                            ${new Date(img.uploaded_at).toLocaleDateString()}
+                        </div>
+                        ${img.caption ? `<div style="font-style: italic; margin-top: 10px; color: var(--teal-dark);">"${img.caption}"</div>` : ''}
+                        <span class="status-badge status-${img.moderation_status.toLowerCase()}">${img.moderation_status}</span>
+                        <div class="image-actions">
+                            <button class="btn btn-audit" onclick="toggleAuditLog('${img.id}')">📋 Audit Log</button>
+                            <button class="btn btn-delete" onclick="deleteImage('${img.id}')">🗑️ Delete</button>
+                        </div>
+                        <div id="audit-${img.id}" class="audit-log-box" style="display: none;">
+                            Loading audit log...
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            console.log('Uploading:', file.name);
+            
+            try {
+                // Step 1: Request presigned URL
+                const urlResponse = await fetch(`${API_URL}/images/request-upload`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        item_id: 'PLANT-001',
+                        item_type: 'plant',
+                        filename: file.name,
+                        content_type: file.type
+                    })
+                });
+
+                if (urlResponse.ok) {
+                    const { upload_id, presigned_url } = await urlResponse.json();
+
+                    // Step 2: Upload to S3 (simulated)
+                    console.log('Upload URL:', presigned_url);
+
+                    // Step 3: Confirm upload
+                    const confirmResponse = await fetch(`${API_URL}/images/confirm-upload`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            upload_id,
+                            metadata: {
+                                item_id: 'PLANT-001',
+                                item_type: 'plant',
+                                filename: file.name,
+                                content_type: file.type,
+                                caption: null,
+                                growth_stage: null,
+                                tags: []
+                            }
+                        })
+                    });
+
+                    if (confirmResponse.ok) {
+                        alert('✅ Image uploaded! Awaiting moderation.');
+                        loadMyImages();
+                    }
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('⚠️ Upload simulated locally. Start mock server for full functionality.');
+            }
+
+            // Reset file input
+            event.target.value = '';
+        }
+
+        async function deleteImage(imageId) {
+            if (!confirm('Are you sure you want to delete this image? This will be logged in the audit trail.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/images/${imageId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('🗑️ Image deleted and logged in audit trail');
+                    const card = document.getElementById(`card-${imageId}`);
+                    if (card) {
+                        card.innerHTML += '<div class="deleted-overlay">DELETED</div>';
+                        setTimeout(() => card.style.opacity = '0.5', 100);
+                    }
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+                alert('🗑️ Deletion logged locally (start mock server for full functionality)');
+            }
+        }
+
+        async function toggleAuditLog(imageId) {
+            const auditBox = document.getElementById(`audit-${imageId}`);
+            
+            if (auditBox.style.display === 'none') {
+                // Show and load audit log
+                auditBox.style.display = 'block';
+                
+                try {
+                    const response = await fetch(`${API_URL}/images/${imageId}/audit`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        renderAuditLog(imageId, data.audit_logs);
+                    } else {
+                        throw new Error('API not available');
+                    }
+                } catch (error) {
+                    // Use mock audit data
+                    const mockAudit = [
+                        {
+                            action: 'UPLOADED',
+                            performed_at: '2025-10-16T10:30:00Z',
+                            details: 'Image uploaded by user'
+                        },
+                        {
+                            action: 'VIEWED_BY_MODERATOR',
+                            performed_at: '2025-10-16T11:00:00Z',
+                            details: 'Viewed by moderator-001'
+                        },
+                        {
+                            action: 'APPROVED',
+                            performed_at: '2025-10-16T11:05:00Z',
+                            details: 'Looks great!'
+                        }
+                    ];
+                    renderAuditLog(imageId, mockAudit);
+                }
+            } else {
+                // Hide audit log
+                auditBox.style.display = 'none';
+            }
+        }
+
+        function renderAuditLog(imageId, logs) {
+            const auditBox = document.getElementById(`audit-${imageId}`);
+            
+            if (logs.length === 0) {
+                auditBox.innerHTML = '<div style="text-align: center; padding: 10px;">No audit entries yet</div>';
+                return;
+            }
+            
+            auditBox.innerHTML = logs.map(log => `
+                <div class="audit-item">
+                    <div class="audit-action">${getActionEmoji(log.action)} ${log.action}</div>
+                    ${log.details ? `<div>${log.details}</div>` : ''}
+                    <div class="audit-time">${new Date(log.performed_at).toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+
+        function getActionEmoji(action) {
+            const emojis = {
+                'UPLOADED': '📸',
+                'APPROVED': '✅',
+                'REJECTED': '❌',
+                'FLAGGED': '⚠️',
+                'DELETED': '🗑️',
+                'VIEWED_BY_MODERATOR': '👀',
+                'RESTORED': '♻️'
+            };
+            return emojis[action] || '📋';
+        }
+    </script>
+</body>
+</html>
+

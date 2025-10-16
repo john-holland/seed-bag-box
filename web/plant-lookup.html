@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌱 Plant Lookup - Seed Box Bag Box</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --light-green: #C8E6C9;
+            --medium-green: #81C784;
+            --dark-green: #4CAF50;
+            --eggshell: #F5F5DC;
+            --white: #FFFFFF;
+            --light-blue: #B3E5FC;
+            --medium-blue: #4FC3F7;
+            --dark-blue: #0288D1;
+            --aqua: #00BCD4;
+            --teal: #009688;
+            --teal-dark: #00796B;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --shadow-hover: rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--eggshell) 0%, var(--light-green) 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            padding: 60px 40px 40px 40px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            
+            /* 45-degree angled border */
+            clip-path: polygon(
+                0% 30px,
+                30px 0%,
+                calc(100% - 30px) 0%,
+                100% 30px,
+                100% calc(100% - 30px),
+                calc(100% - 30px) 100%,
+                30px 100%,
+                0% calc(100% - 30px)
+            );
+            border: 4px solid var(--teal);
+            box-shadow: 0 10px 40px rgba(0, 150, 136, 0.2);
+        }
+
+        /* Add decorative inner border */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            clip-path: polygon(
+                0% 26px,
+                26px 0%,
+                calc(100% - 26px) 0%,
+                100% 26px,
+                100% calc(100% - 26px),
+                calc(100% - 26px) 100%,
+                26px 100%,
+                0% calc(100% - 26px)
+            );
+            border: 2px solid var(--aqua);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Soft green leaf logo in upper left */
+        .leaf-logo {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: 100px;
+            height: 100px;
+            z-index: 10;
+            filter: drop-shadow(0 4px 8px rgba(0, 150, 136, 0.3));
+        }
+
+        /* Material UI Paper */
+        .paper {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .paper:hover {
+            box-shadow: 0 4px 16px var(--shadow-hover);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: var(--dark-green);
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: var(--teal-dark);
+            font-size: 1.1em;
+            font-weight: 400;
+        }
+
+        /* Search Bar */
+        .search-section {
+            padding: 30px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid var(--teal);
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 16px 20px;
+            font-size: 1.1em;
+            border: 2px solid var(--light-blue);
+            border-radius: 4px;
+            background: var(--eggshell);
+            color: var(--teal-dark);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--aqua);
+            background: var(--white);
+            box-shadow: 0 2px 8px rgba(0, 188, 212, 0.2);
+        }
+
+        .search-button {
+            padding: 16px 40px;
+            font-size: 1.1em;
+            font-weight: 500;
+            background: linear-gradient(135deg, var(--aqua) 0%, var(--teal) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .search-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 150, 136, 0.3);
+        }
+
+        .search-button:active {
+            transform: translateY(0);
+        }
+
+        /* Filter Chips */
+        .filter-chips {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            padding: 8px 16px;
+            background: var(--light-green);
+            border: 2px solid var(--teal);
+            border-radius: 20px;
+            color: var(--dark-green);
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chip:hover {
+            background: var(--medium-green);
+            transform: scale(1.05);
+        }
+
+        .chip.active {
+            background: var(--teal);
+            color: var(--white);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            padding: 25px;
+            text-align: center;
+            border-left: 4px solid var(--teal);
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-card.green {
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-green) 100%);
+        }
+
+        .stat-card.green .stat-number {
+            color: var(--dark-blue);
+        }
+
+        .stat-card.green .stat-label {
+            color: var(--medium-blue);
+        }
+
+        .stat-card.blue {
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-blue) 100%);
+            border-left-color: var(--aqua);
+        }
+
+        .stat-card.blue .stat-number {
+            color: var(--dark-green);
+        }
+
+        .stat-card.blue .stat-label {
+            color: var(--medium-green);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: 300;
+            color: var(--teal-dark);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1em;
+            color: var(--dark-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        /* Results Section */
+        .results-section {
+            padding: 30px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--teal);
+        }
+
+        .results-title {
+            font-size: 1.5em;
+            color: var(--teal-dark);
+            font-weight: 400;
+        }
+
+        .results-count {
+            color: var(--aqua);
+            font-weight: 500;
+        }
+
+        /* Result Cards */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .result-card {
+            padding: 20px;
+            border-left: 4px solid var(--teal);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .result-card:hover {
+            transform: translateX(5px);
+            border-left-color: var(--aqua);
+        }
+
+        .result-card.seed {
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-green) 100%);
+        }
+
+        .result-card.plant {
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-blue) 100%);
+            border-left-color: var(--aqua);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .result-title {
+            font-size: 1.3em;
+            color: var(--teal-dark);
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .result-subtitle {
+            color: var(--dark-green);
+            font-size: 0.9em;
+        }
+
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-seed {
+            background: var(--light-green);
+            color: var(--dark-green);
+            border: 1px solid var(--teal);
+        }
+
+        .badge-plant {
+            background: var(--light-blue);
+            color: var(--dark-blue);
+            border: 1px solid var(--aqua);
+        }
+
+        .badge-ready {
+            background: var(--aqua);
+            color: var(--white);
+        }
+
+        .result-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--teal);
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 0.75em;
+            color: var(--teal-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 1em;
+            color: var(--dark-green);
+            font-weight: 500;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--teal);
+            font-size: 1.2em;
+        }
+
+        .spinner {
+            border: 4px solid var(--light-blue);
+            border-top: 4px solid var(--aqua);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--teal-dark);
+        }
+
+        .empty-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .empty-message {
+            font-size: 1.3em;
+            color: var(--dark-green);
+            margin-bottom: 10px;
+        }
+
+        .empty-hint {
+            color: var(--aqua);
+        }
+
+        /* Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 8px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 30px;
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--light-blue) 100%);
+            border-bottom: 3px solid var(--teal);
+        }
+
+        .modal-title {
+            font-size: 2em;
+            color: var(--teal-dark);
+            margin-bottom: 10px;
+        }
+
+        .modal-subtitle {
+            color: var(--dark-green);
+            font-size: 1.1em;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            padding: 15px;
+            background: var(--eggshell);
+            border-radius: 4px;
+            border-left: 3px solid var(--teal);
+        }
+
+        .detail-label {
+            font-size: 0.85em;
+            color: var(--teal-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .detail-value {
+            font-size: 1.1em;
+            color: var(--dark-green);
+            font-weight: 500;
+        }
+
+        /* Growth Stage Illustrations */
+        .growth-stages {
+            margin: 30px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--light-blue) 100%);
+            border-radius: 8px;
+            border: 2px solid var(--teal);
+        }
+
+        .growth-stages-title {
+            text-align: center;
+            font-size: 1.3em;
+            color: var(--teal-dark);
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .stages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stage-card {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .stage-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--aqua);
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.3);
+        }
+
+        .stage-card.active {
+            border-color: var(--teal);
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--eggshell) 100%);
+        }
+
+        .stage-illustration {
+            width: 100%;
+            height: 120px;
+            margin-bottom: 10px;
+        }
+
+        .stage-name {
+            font-size: 0.85em;
+            color: var(--teal-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stage-day {
+            font-size: 0.75em;
+            color: var(--aqua);
+            margin-top: 5px;
+        }
+
+        .stage-upload-btn {
+            margin-top: 10px;
+            padding: 6px 12px;
+            background: var(--aqua);
+            color: var(--white);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75em;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .stage-upload-btn:hover {
+            background: var(--teal);
+            transform: scale(1.05);
+        }
+
+        /* Shipping Options */
+        .shipping-options {
+            margin: 30px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--eggshell) 100%);
+            border-radius: 8px;
+            border: 3px solid var(--teal);
+        }
+
+        .shipping-title {
+            font-size: 1.4em;
+            color: var(--teal-dark);
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .shipping-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .shipping-option {
+            padding: 20px;
+            background: var(--white);
+            border: 3px solid var(--teal);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .shipping-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 150, 136, 0.3);
+        }
+
+        .shipping-option.selected {
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--light-blue) 100%);
+            border-color: var(--aqua);
+        }
+
+        .shipping-option-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--teal-dark);
+            margin-bottom: 10px;
+        }
+
+        .shipping-option-desc {
+            font-size: 0.85em;
+            color: var(--dark-green);
+            line-height: 1.4;
+        }
+
+        .shipping-option-price {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--aqua);
+            margin-top: 10px;
+        }
+
+        /* True Leaf Comparison */
+        .leaf-comparison {
+            margin: 30px 0;
+            padding: 25px;
+            background: var(--white);
+            border-radius: 8px;
+            border: 3px solid var(--teal);
+        }
+
+        .comparison-title {
+            text-align: center;
+            font-size: 1.4em;
+            color: var(--teal-dark);
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .comparison-item {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--eggshell) 0%, var(--light-green) 100%);
+            border-radius: 8px;
+            border: 2px solid var(--teal);
+        }
+
+        .comparison-item.true-leaf {
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--light-green) 100%);
+            border-color: var(--aqua);
+        }
+
+        .comparison-label {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--teal-dark);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .comparison-svg {
+            width: 100%;
+            height: 180px;
+            margin-bottom: 15px;
+        }
+
+        .comparison-features {
+            text-align: left;
+            font-size: 0.9em;
+            color: var(--dark-green);
+            line-height: 1.8;
+        }
+
+        .comparison-features li {
+            margin-bottom: 5px;
+        }
+
+        .highlight-box {
+            background: var(--aqua);
+            color: var(--white);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: var(--aqua);
+            color: var(--white);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .close-button:hover {
+            background: var(--teal);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .search-container {
+                flex-direction: column;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Soft Green Leaf Logo -->
+        <svg class="leaf-logo" viewBox="0 0 100 100">
+            <!-- Blended merged circle background -->
+            <defs>
+                <radialGradient id="circleGradient" cx="50%" cy="50%">
+                    <stop offset="0%" style="stop-color:#C8E6C9;stop-opacity:0.9" />
+                    <stop offset="70%" style="stop-color:#81C784;stop-opacity:0.7" />
+                    <stop offset="100%" style="stop-color:#4CAF50;stop-opacity:0.5" />
+                </radialGradient>
+                <filter id="softBlur">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" />
+                </filter>
+            </defs>
+            
+            <!-- Soft blended circle -->
+            <circle cx="50" cy="50" r="45" fill="url(#circleGradient)" filter="url(#softBlur)" opacity="0.8"/>
+            
+            <!-- Soft green leaf -->
+            <path d="M 50 20 Q 35 35, 35 50 Q 35 65, 50 80 Q 65 65, 65 50 Q 65 35, 50 20 Z" 
+                  fill="#81C784" 
+                  stroke="#4CAF50" 
+                  stroke-width="2"
+                  opacity="0.9"/>
+            
+            <!-- Leaf vein -->
+            <path d="M 50 20 L 50 80" 
+                  stroke="#4CAF50" 
+                  stroke-width="2" 
+                  stroke-linecap="round"
+                  opacity="0.7"/>
+            
+            <!-- Side veins -->
+            <path d="M 50 35 Q 42 40, 38 45" 
+                  stroke="#4CAF50" 
+                  stroke-width="1.5" 
+                  fill="none"
+                  opacity="0.6"/>
+            <path d="M 50 35 Q 58 40, 62 45" 
+                  stroke="#4CAF50" 
+                  stroke-width="1.5" 
+                  fill="none"
+                  opacity="0.6"/>
+            <path d="M 50 50 Q 43 55, 40 60" 
+                  stroke="#4CAF50" 
+                  stroke-width="1.5" 
+                  fill="none"
+                  opacity="0.6"/>
+            <path d="M 50 50 Q 57 55, 60 60" 
+                  stroke="#4CAF50" 
+                  stroke-width="1.5" 
+                  fill="none"
+                  opacity="0.6"/>
+            
+            <!-- Highlight for depth -->
+            <ellipse cx="45" cy="35" rx="8" ry="6" fill="#C8E6C9" opacity="0.4"/>
+        </svg>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>🌱 Plant Lookup & Search</h1>
+            <div class="subtitle">Seed Box Bag Box - Germination Tracking System</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="paper stat-card green">
+                <div class="stat-number" id="totalSeeds">0</div>
+                <div class="stat-label">Seeds Stored</div>
+            </div>
+            <div class="paper stat-card blue">
+                <div class="stat-number" id="totalPlants">0</div>
+                <div class="stat-label">Plants Growing</div>
+            </div>
+            <div class="paper stat-card green">
+                <div class="stat-number" id="readyToShip">0</div>
+                <div class="stat-label">Ready to Ship</div>
+            </div>
+            <div class="paper stat-card blue">
+                <div class="stat-number" id="totalSpecies">0</div>
+                <div class="stat-label">Species</div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="paper search-section">
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="Search by species, variety, ID, or status..."
+                    autofocus
+                >
+                <button class="search-button" onclick="performSearch()">
+                    🔍 Search
+                </button>
+            </div>
+
+            <div class="filter-chips">
+                <div class="chip active" data-filter="all" onclick="setFilter('all')">All</div>
+                <div class="chip" data-filter="seeds" onclick="setFilter('seeds')">🌱 Seeds</div>
+                <div class="chip" data-filter="germinating" onclick="setFilter('germinating')">🌿 Germinating</div>
+                <div class="chip" data-filter="true-plant" onclick="setFilter('true-plant')">🌳 True Plants</div>
+                <div class="chip" data-filter="ready" onclick="setFilter('ready')">📦 Ready to Ship</div>
+                <div class="chip" data-filter="edible" onclick="setFilter('edible')">🍅 Edible Fruit</div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="paper results-section">
+            <div class="results-header">
+                <div class="results-title">Search Results</div>
+                <div class="results-count"><span id="resultCount">0</span> items found</div>
+            </div>
+
+            <div id="results" class="results-grid">
+                <div class="empty-state">
+                    <div class="empty-icon">🔍</div>
+                    <div class="empty-message">Start searching to find plants and seeds</div>
+                    <div class="empty-hint">Try searching for "tomato", "basil", or "ready"</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <button class="close-button" onclick="closeModal()">✕ Close</button>
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Loading...</div>
+                <div class="modal-subtitle" id="modalSubtitle"></div>
+            </div>
+            <div class="modal-body" id="modalBody">
+                Loading details...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+        let currentFilter = 'all';
+        let allData = [];
+
+        // Sample mock data for demo
+        const mockData = [
+            {
+                type: 'seed',
+                id: 'SEED-001',
+                species: 'Tomato',
+                variety: 'Cherokee Purple',
+                status: 'STORED',
+                location: 'Cold-1',
+                stored_date: '2025-10-10',
+                temperature: '5°C',
+                viability: '95%',
+                edible_fruit: true
+            },
+            {
+                type: 'plant',
+                id: 'PLANT-001',
+                species: 'Tomato',
+                variety: 'Cherokee Purple',
+                phase: 'TRUE_LEAF_EMERGENCE',
+                is_true_plant: true,
+                is_autotrophic: false,
+                true_leaf_count: 2,
+                days_since_germination: 14,
+                ready_to_ship: false,
+                edible_fruit: true
+            },
+            {
+                type: 'seed',
+                id: 'SEED-002',
+                species: 'Basil',
+                variety: 'Sweet Basil',
+                status: 'STORED',
+                location: 'Cold-2',
+                stored_date: '2025-10-12',
+                temperature: '5°C',
+                viability: '98%',
+                edible_fruit: false
+            },
+            {
+                type: 'plant',
+                id: 'PLANT-002',
+                species: 'Basil',
+                variety: 'Sweet Basil',
+                phase: 'PHOTOSYNTHESIS',
+                is_true_plant: true,
+                is_autotrophic: true,
+                true_leaf_count: 4,
+                days_since_germination: 12,
+                ready_to_ship: true,
+                edible_fruit: false
+            },
+            {
+                type: 'plant',
+                id: 'PLANT-003',
+                species: 'Pepper',
+                variety: 'Jalapeño',
+                phase: 'COTYLEDON_EXPANSION',
+                is_true_plant: false,
+                is_autotrophic: false,
+                true_leaf_count: 0,
+                days_since_germination: 8,
+                ready_to_ship: false,
+                edible_fruit: true
+            },
+            {
+                type: 'seed',
+                id: 'SEED-003',
+                species: 'Lettuce',
+                variety: 'Buttercrunch',
+                status: 'STORED',
+                location: 'Cold-1',
+                stored_date: '2025-10-15',
+                temperature: '5°C',
+                viability: '92%',
+                edible_fruit: false
+            },
+            {
+                type: 'plant',
+                id: 'PLANT-004',
+                species: 'Cantaloupe',
+                variety: 'Hale\'s Best',
+                phase: 'CONTINUED_GROWTH',
+                is_true_plant: true,
+                is_autotrophic: true,
+                true_leaf_count: 4,
+                days_since_germination: 18,
+                ready_to_ship: true,
+                edible_fruit: true
+            },
+            {
+                type: 'seed',
+                id: 'SEED-004',
+                species: 'Watermelon',
+                variety: 'Sugar Baby',
+                status: 'STORED',
+                location: 'Cold-2',
+                stored_date: '2025-10-14',
+                temperature: '5°C',
+                viability: '90%',
+                edible_fruit: true
+            },
+            {
+                type: 'seed',
+                id: 'SEED-005',
+                species: 'Cabbage',
+                variety: 'Early Jersey Wakefield',
+                status: 'STORED',
+                location: 'Cold-1',
+                stored_date: '2025-10-13',
+                temperature: '5°C',
+                viability: '94%',
+                edible_fruit: false
+            },
+            {
+                type: 'plant',
+                id: 'PLANT-005',
+                species: 'Wheat',
+                variety: 'Hard Red Winter',
+                phase: 'PHOTOSYNTHESIS',
+                is_true_plant: true,
+                is_autotrophic: true,
+                true_leaf_count: 3,
+                days_since_germination: 12,
+                ready_to_ship: false,
+                edible_fruit: false
+            },
+            {
+                type: 'seed',
+                id: 'SEED-006',
+                species: 'Cannabis',
+                variety: '⚠️ LEGAL COMPLIANCE REQUIRED',
+                status: 'STORED',
+                location: '⚠️ SEPARATE FACILITY',
+                stored_date: '2025-10-12',
+                temperature: '5°C',
+                viability: '96%',
+                edible_fruit: false
+            },
+            {
+                type: 'seed',
+                id: 'SEED-007',
+                species: 'Sugar Cane',
+                variety: 'CO 86032',
+                status: 'STORED',
+                location: 'Cold-3-Tropical',
+                stored_date: '2025-10-10',
+                temperature: '10°C',
+                viability: '88%',
+                edible_fruit: false
+            },
+        ];
+
+        // Initialize on load
+        window.addEventListener('load', async () => {
+            await loadData();
+            updateStats();
+            performSearch(); // Show all results initially
+
+            // Enter key triggers search
+            document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+        });
+
+        async function loadData() {
+            try {
+                // Try to fetch from API
+                const response = await fetch(`${API_URL}/api/plants/search`);
+                if (response.ok) {
+                    allData = await response.json();
+                    console.log('✅ Loaded data from API');
+                } else {
+                    // Use mock data
+                    allData = mockData;
+                    console.log('📦 Using mock data');
+                }
+            } catch (error) {
+                console.log('🐸 Using mock data (start mock server for live data)');
+                allData = mockData;
+            }
+        }
+
+        function updateStats() {
+            const seeds = allData.filter(d => d.type === 'seed').length;
+            const plants = allData.filter(d => d.type === 'plant').length;
+            const ready = allData.filter(d => d.ready_to_ship).length;
+            const species = new Set(allData.map(d => d.species)).size;
+
+            document.getElementById('totalSeeds').textContent = seeds;
+            document.getElementById('totalPlants').textContent = plants;
+            document.getElementById('readyToShip').textContent = ready;
+            document.getElementById('totalSpecies').textContent = species;
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            
+            // Update chip styles
+            document.querySelectorAll('.chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+            
+            performSearch();
+        }
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filtered = allData;
+
+            // Apply text search
+            if (query) {
+                filtered = filtered.filter(item => 
+                    item.species.toLowerCase().includes(query) ||
+                    (item.variety && item.variety.toLowerCase().includes(query)) ||
+                    item.id.toLowerCase().includes(query) ||
+                    (item.status && item.status.toLowerCase().includes(query)) ||
+                    (item.phase && item.phase.toLowerCase().includes(query))
+                );
+            }
+
+            // Apply filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(item => {
+                    switch(currentFilter) {
+                        case 'seeds': return item.type === 'seed';
+                        case 'germinating': return item.type === 'plant' && !item.is_true_plant;
+                        case 'true-plant': return item.is_true_plant;
+                        case 'ready': return item.ready_to_ship;
+                        case 'edible': return item.edible_fruit;
+                        default: return true;
+                    }
+                });
+            }
+
+            displayResults(filtered);
+        }
+
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('results');
+            const countSpan = document.getElementById('resultCount');
+            
+            countSpan.textContent = results.length;
+
+            if (results.length === 0) {
+                resultsDiv.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🌿</div>
+                        <div class="empty-message">No results found</div>
+                        <div class="empty-hint">Try a different search or filter</div>
+                    </div>
+                `;
+                return;
+            }
+
+            resultsDiv.innerHTML = results.map(item => {
+                if (item.type === 'seed') {
+                    return renderSeedCard(item);
+                } else {
+                    return renderPlantCard(item);
+                }
+            }).join('');
+        }
+
+        function renderSeedCard(seed) {
+            return `
+                <div class="paper result-card seed" onclick="showDetail('${seed.id}')">
+                    <div class="result-header">
+                        <div>
+                            <div class="result-title">${seed.species}</div>
+                            <div class="result-subtitle">${seed.variety || 'Standard variety'}</div>
+                        </div>
+                        <div class="result-badge badge-seed">Seed</div>
+                    </div>
+                    <div class="result-info">
+                        <div class="info-item">
+                            <div class="info-label">ID</div>
+                            <div class="info-value">${seed.id}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Location</div>
+                            <div class="info-value">${seed.location}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Temperature</div>
+                            <div class="info-value">${seed.temperature}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Viability</div>
+                            <div class="info-value">${seed.viability}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPlantCard(plant) {
+            const badge = plant.ready_to_ship ? 'badge-ready' : 'badge-plant';
+            const badgeText = plant.ready_to_ship ? 'Ready' : 'Growing';
+            
+            return `
+                <div class="paper result-card plant" onclick="showDetail('${plant.id}')">
+                    <div class="result-header">
+                        <div>
+                            <div class="result-title">${plant.species}</div>
+                            <div class="result-subtitle">${plant.variety || 'Standard variety'}</div>
+                        </div>
+                        <div class="result-badge ${badge}">${badgeText}</div>
+                    </div>
+                    <div class="result-info">
+                        <div class="info-item">
+                            <div class="info-label">ID</div>
+                            <div class="info-value">${plant.id}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Phase</div>
+                            <div class="info-value">${formatPhase(plant.phase)}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">True Plant</div>
+                            <div class="info-value">${plant.is_true_plant ? '✅ Yes' : '❌ No'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Days</div>
+                            <div class="info-value">${plant.days_since_germination}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatPhase(phase) {
+            return phase.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function showDetail(id) {
+            const item = allData.find(d => d.id === id);
+            if (!item) return;
+
+            const modal = document.getElementById('detailModal');
+            const title = document.getElementById('modalTitle');
+            const subtitle = document.getElementById('modalSubtitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = `${item.species} ${item.variety ? '- ' + item.variety : ''}`;
+            subtitle.textContent = item.id;
+
+            if (item.type === 'seed') {
+                body.innerHTML = `
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Type</div>
+                            <div class="detail-value">Seed</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Status</div>
+                            <div class="detail-value">${item.status}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Storage Location</div>
+                            <div class="detail-value">${item.location}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Temperature</div>
+                            <div class="detail-value">${item.temperature}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Stored Date</div>
+                            <div class="detail-value">${item.stored_date}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Viability</div>
+                            <div class="detail-value">${item.viability}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Edible Fruit</div>
+                            <div class="detail-value">${item.edible_fruit ? '✅ Yes' : '❌ No'}</div>
+                        </div>
+                    </div>
+                    ${renderGrowthStages(null)}
+                `;
+            } else {
+                body.innerHTML = `
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Type</div>
+                            <div class="detail-value">Plant</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Phase</div>
+                            <div class="detail-value">${formatPhase(item.phase)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">True Plant</div>
+                            <div class="detail-value">${item.is_true_plant ? '✅ Yes' : '❌ No'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Autotrophic</div>
+                            <div class="detail-value">${item.is_autotrophic ? '✅ Yes' : '❌ No'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">True Leaves</div>
+                            <div class="detail-value">${item.true_leaf_count}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Days Growing</div>
+                            <div class="detail-value">${item.days_since_germination}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Ready to Ship</div>
+                            <div class="detail-value">${item.ready_to_ship ? '✅ Yes' : '❌ No'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Bears Edible Fruit</div>
+                            <div class="detail-value">${item.edible_fruit ? '🍅 Yes' : '🌿 No (leaves/stems)'}</div>
+                        </div>
+                    </div>
+                    ${renderGrowthStages(item.phase)}
+                    ${renderShippingOptions(item)}
+                    ${item.is_true_plant || item.phase === 'TRUE_LEAF_EMERGENCE' ? renderLeafComparison() : ''}
+                `;
+            }
+
+            modal.classList.add('active');
+        }
+
+        function renderShippingOptions(plant) {
+            if (plant.type !== 'plant' || !plant.ready_to_ship) {
+                return '';
+            }
+
+            return `
+                <div class="shipping-options">
+                    <div class="shipping-title">📦 Configure Shipping</div>
+                    <div class="shipping-grid">
+                        <div class="shipping-option selected" onclick="selectShipping(this, 'live-sprout')">
+                            <div class="shipping-option-title">🌱 Live Sprout</div>
+                            <div class="shipping-option-desc">In growing medium, ready to transplant</div>
+                            <div class="shipping-option-price">Standard</div>
+                        </div>
+                        <div class="shipping-option" onclick="selectShipping(this, 'bare-root')">
+                            <div class="shipping-option-title">🌿 Bare Root</div>
+                            <div class="shipping-option-desc">Roots cleaned, lighter shipping</div>
+                            <div class="shipping-option-price">-$2</div>
+                        </div>
+                        <div class="shipping-option" onclick="selectShipping(this, 'potted')">
+                            <div class="shipping-option-title">🪴 Potted</div>
+                            <div class="shipping-option-desc">In 2-4" pot with soil</div>
+                            <div class="shipping-option-price">+$5</div>
+                        </div>
+                        <div class="shipping-option" onclick="selectShipping(this, 'expedited')">
+                            <div class="shipping-option-title">⚡ Expedited (2-day)</div>
+                            <div class="shipping-option-desc">Fast shipping with temp control</div>
+                            <div class="shipping-option-price">+$10</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectShipping(element, type) {
+            // Remove selected from siblings
+            element.parentElement.querySelectorAll('.shipping-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            // Add selected to clicked
+            element.classList.add('selected');
+            
+            console.log('Selected shipping option:', type);
+            // TODO: Save to API
+        }
+
+        function uploadStageImage(stage) {
+            alert(`📸 Upload photo for stage: ${stage}\n\nThis would open file picker and upload image tagged with growth stage.`);
+            // TODO: Implement actual upload
+            // document.getElementById('stageFileInput').click();
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        // Close modal on background click
+        document.getElementById('detailModal').addEventListener('click', (e) => {
+            if (e.target.id === 'detailModal') {
+                closeModal();
+            }
+        });
+
+        function renderGrowthStages(currentPhase) {
+            const stages = [
+                { name: 'Imbibition', phase: 'IMBIBITION', day: '1-3', icon: '💧' },
+                { name: 'Radicle', phase: 'RADICLE_EMERGENCE', day: '3-7', icon: '🌰' },
+                { name: 'Shoot', phase: 'SHOOT_EMERGENCE', day: '5-10', icon: '🌱' },
+                { name: 'Cotyledon', phase: 'COTYLEDON_EXPANSION', day: '7-14', icon: '🌿' },
+                { name: 'True Leaf', phase: 'TRUE_LEAF_EMERGENCE', day: '10-21', icon: '🍃' },
+                { name: 'Photosynthesis', phase: 'PHOTOSYNTHESIS', day: '14-28', icon: '☀️' },
+                { name: 'Growth', phase: 'CONTINUED_GROWTH', day: '21+', icon: '🌳' }
+            ];
+
+            return `
+                <div class="growth-stages">
+                    <div class="growth-stages-title">🌱 Germination Stages</div>
+                    <div class="stages-grid">
+                        ${stages.map(stage => `
+                            <div class="stage-card ${stage.phase === currentPhase ? 'active' : ''}">
+                                ${renderStageIllustration(stage.phase)}
+                                <div class="stage-name">${stage.icon} ${stage.name}</div>
+                                <div class="stage-day">Day ${stage.day}</div>
+                                <button class="stage-upload-btn" onclick="uploadStageImage('${stage.phase}')">
+                                    📸 Upload Photo
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStageIllustration(phase) {
+            const illustrations = {
+                'IMBIBITION': `
+                    <svg class="stage-illustration" viewBox="0 0 100 100">
+                        <ellipse cx="50" cy="50" rx="20" ry="25" fill="#C8E6C9" stroke="#009688" stroke-width="2"/>
+                        <ellipse cx="50" cy="50" rx="15" ry="20" fill="#81C784"/>
+                        <circle cx="45" cy="40" r="3" fill="#B3E5FC" opacity="0.7"/>
+                        <circle cx="55" cy="48" r="2" fill="#B3E5FC" opacity="0.7"/>
+                        <circle cx="48" cy="55" r="2.5" fill="#B3E5FC" opacity="0.7"/>
+                    </svg>
+                `,
+                'RADICLE_EMERGENCE': `
+                    <svg class="stage-illustration" viewBox="0 0 100 100">
+                        <ellipse cx="50" cy="35" rx="18" ry="20" fill="#C8E6C9" stroke="#009688" stroke-width="2"/>
+                        <path d="M 50 55 Q 50 70, 48 85" stroke="#4CAF50" stroke-width="3" fill="none" stroke-linecap="round"/>
+                        <circle cx="48" cy="85" r="3" fill="#81C784"/>
+                    </svg>
+                `,
+                'SHOOT_EMERGENCE': `
+                    <svg class="stage-illustration" viewBox="0 0 100 100">
+                        <ellipse cx="50" cy="70" rx="18" ry="20" fill="#C8E6C9" stroke="#009688" stroke-width="2"/>
+                        <path d="M 50 70 Q 50 50, 50 35" stroke="#4CAF50" stroke-width="3" fill="none"/>
+                        <path d="M 50 35 Q 45 30, 42 25" stroke="#81C784" stroke-width="2" fill="none"/>
+                        <path d="M 50 35 Q 55 30, 58 25" stroke="#81C784" stroke-width="2" fill="none"/>
+                        <path d="M 50 80 Q 48 90, 45 95" stroke="#4CAF50" stroke-width="2" fill="none"/>
+                    </svg>
+                `,
+                'COTYLEDON_EXPANSION': `
+                    <svg class="stage-illustration" viewBox="0 0 100 100">
+                        <path d="M 50 80 L 50 40" stroke="#4CAF50" stroke-width="3"/>
+                        <ellipse cx="35" cy="35" rx="12" ry="8" fill="#C8E6C9" stroke="#009688" stroke-width="2"/>
+                        <ellipse cx="65" cy="35" rx="12" ry="8" fill="#C8E6C9" stroke="#009688" stroke-width="2"/>
+                        <path d="M 50 80 Q 48 88, 45 95" stroke="#4CAF50" stroke-width="2" fill="none"/>
+                    </svg>
+                `,
+                'TRUE_LEAF_EMERGENCE': `
+                    <svg class="stage-illustration" viewBox="0 0 100 100">
+                        <path d="M 50 85 L 50 30" stroke="#4CAF50" stroke-width="3"/>
+                        <ellipse cx="35" cy="50" rx="10" ry="6" fill="#C8E6C9" stroke="#009688" stroke-width="1.5"/>
+                        <ellipse cx="65" cy="50" rx="10" ry="6" fill="#C8E6C9" stroke="#009688" stroke-width="1.5"/>
+                        <path d="M 50 30 L 35 20 L 40 18 L 50 25 L 60 18 L 65 20 Z" fill="#00BCD4" stroke="#009688" stroke-width="2"/>
+                        <path d="M 50 25 L 42 15 L 45 12 L 50 18 L 55 12 L 58 15 Z" fill="#4FC3F7" stroke="#009688" stroke-width="2"/>
+                        <path d="M 50 85 Q 47 92, 44 98" stroke="#4CAF50" stroke-width="2"/>
+                    </svg>
+                `,
+                'PHOTOSYNTHESIS': `
+                    <svg class="stage-illustration" viewBox="0 0 100 100">
+                        <path d="M 50 90 L 50 35" stroke="#4CAF50" stroke-width="4"/>
+                        <path d="M 50 35 L 35 25 L 40 22 L 50 30 L 60 22 L 65 25 Z" fill="#00BCD4" stroke="#009688" stroke-width="2"/>
+                        <path d="M 50 30 L 40 18 L 44 15 L 50 22 L 56 15 L 60 18 Z" fill="#4FC3F7" stroke="#009688" stroke-width="2"/>
+                        <path d="M 50 50 L 38 42 L 42 40 L 50 46 L 58 40 L 62 42 Z" fill="#00BCD4" stroke="#009688" stroke-width="2"/>
+                        <circle cx="30" cy="15" r="2" fill="#FFD700" opacity="0.8"/>
+                        <circle cx="35" cy="10" r="1.5" fill="#FFD700" opacity="0.8"/>
+                        <circle cx="70" cy="15" r="2" fill="#FFD700" opacity="0.8"/>
+                        <circle cx="65" cy="10" r="1.5" fill="#FFD700" opacity="0.8"/>
+                        <path d="M 50 90 Q 47 95, 44 98" stroke="#4CAF50" stroke-width="3"/>
+                    </svg>
+                `,
+                'CONTINUED_GROWTH': `
+                    <svg class="stage-illustration" viewBox="0 0 100 100">
+                        <path d="M 50 95 L 50 20" stroke="#4CAF50" stroke-width="4"/>
+                        <path d="M 50 20 L 35 12 L 38 10 L 50 17 L 62 10 L 65 12 Z" fill="#00BCD4" stroke="#009688" stroke-width="2"/>
+                        <path d="M 50 30 L 38 22 L 42 20 L 50 26 L 58 20 L 62 22 Z" fill="#4FC3F7" stroke="#009688" stroke-width="2"/>
+                        <path d="M 50 45 L 38 37 L 42 35 L 50 41 L 58 35 L 62 37 Z" fill="#00BCD4" stroke="#009688" stroke-width="2"/>
+                        <path d="M 50 60 L 40 52 L 44 50 L 50 56 L 56 50 L 60 52 Z" fill="#4FC3F7" stroke="#009688" stroke-width="2"/>
+                        <path d="M 50 75 L 42 68 L 45 66 L 50 71 L 55 66 L 58 68 Z" fill="#00BCD4" stroke="#009688" stroke-width="2"/>
+                        <path d="M 50 95 Q 47 98, 45 100" stroke="#4CAF50" stroke-width="3"/>
+                    </svg>
+                `
+            };
+
+            return illustrations[phase] || illustrations['IMBIBITION'];
+        }
+
+        function renderLeafComparison() {
+            return `
+                <div class="leaf-comparison">
+                    <div class="comparison-title">🍃 Understanding True Leaves vs Cotyledons</div>
+                    <div class="comparison-grid">
+                        <div class="comparison-item">
+                            <div class="comparison-label">Cotyledons (Seed Leaves)</div>
+                            <svg class="comparison-svg" viewBox="0 0 200 150">
+                                <path d="M 100 140 L 100 80" stroke="#4CAF50" stroke-width="4"/>
+                                <ellipse cx="70" cy="70" rx="25" ry="15" fill="#C8E6C9" stroke="#009688" stroke-width="3"/>
+                                <ellipse cx="130" cy="70" rx="25" ry="15" fill="#C8E6C9" stroke="#009688" stroke-width="3"/>
+                                <text x="100" y="30" text-anchor="middle" fill="#009688" font-size="12" font-weight="bold">First 2 Leaves</text>
+                                <text x="100" y="45" text-anchor="middle" fill="#4CAF50" font-size="10">Round/Oval</text>
+                            </svg>
+                            <ul class="comparison-features">
+                                <li>📍 First to appear</li>
+                                <li>🔵 Round or oval shape</li>
+                                <li>👶 From seed, not species-specific</li>
+                                <li>⏰ Temporary - will drop off</li>
+                                <li>⚡ Basic photosynthesis only</li>
+                            </ul>
+                        </div>
+                        <div class="comparison-item true-leaf">
+                            <div class="comparison-label">✨ True Leaves ✨</div>
+                            <svg class="comparison-svg" viewBox="0 0 200 150">
+                                <path d="M 100 140 L 100 50" stroke="#4CAF50" stroke-width="4"/>
+                                <ellipse cx="75" cy="90" rx="20" ry="12" fill="#C8E6C9" stroke="#009688" stroke-width="2" opacity="0.5"/>
+                                <ellipse cx="125" cy="90" rx="20" ry="12" fill="#C8E6C9" stroke="#009688" stroke-width="2" opacity="0.5"/>
+                                <path d="M 100 50 L 70 30 L 75 25 L 100 40 L 125 25 L 130 30 Z" fill="#00BCD4" stroke="#009688" stroke-width="3"/>
+                                <path d="M 80 35 L 82 32 M 85 38 L 87 35 M 90 40 L 92 37" stroke="#009688" stroke-width="1.5"/>
+                                <path d="M 110 40 L 108 37 M 115 38 L 113 35 M 120 35 L 118 32" stroke="#009688" stroke-width="1.5"/>
+                                <text x="100" y="20" text-anchor="middle" fill="#0288D1" font-size="12" font-weight="bold">Species Shape!</text>
+                            </svg>
+                            <ul class="comparison-features">
+                                <li>⭐ Emerge after cotyledons</li>
+                                <li>🌟 Species-specific shape</li>
+                                <li>🔬 Permanent leaves</li>
+                                <li>💪 Full photosynthesis</li>
+                                <li>✅ Marks "True Plant" stage!</li>
+                            </ul>
+                            <div class="highlight-box">
+                                When you see true leaves with the plant's characteristic shape, 
+                                it's officially a "TRUE PLANT" and ready for growing! 🌱→🌳
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
+
