@@ -9,6 +9,7 @@ members = [
     "lambdas/germination-service",
     "lambdas/manufacturing-queue-service",
     "lambdas/image-service",
+    "lambdas/recall-service",
     "shared/models",
     "shared/database",
     "mock-server",

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚠️ Recall Moderation - Seed Box Bag Box</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --light-green: #C8E6C9;
+            --dark-green: #4CAF50;
+            --eggshell: #F5F5DC;
+            --white: #FFFFFF;
+            --light-blue: #B3E5FC;
+            --aqua: #00BCD4;
+            --teal: #009688;
+            --teal-dark: #00796B;
+            --red: #f44336;
+            --orange: #ff9800;
+            --yellow: #FFC107;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--eggshell) 0%, #ffebee 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .paper {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--red);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #ffebee 0%, var(--light-blue) 100%);
+            border-radius: 8px;
+            border: 3px solid var(--red);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: var(--red);
+            font-weight: 300;
+        }
+
+        .warning-box {
+            background: var(--yellow);
+            padding: 20px;
+            border-radius: 8px;
+            border: 3px solid var(--orange);
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .fetch-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .btn-usda {
+            background: linear-gradient(135deg, var(--dark-green) 0%, var(--teal) 100%);
+            color: var(--white);
+        }
+
+        .btn-fda {
+            background: linear-gradient(135deg, var(--aqua) 0%, var(--light-blue) 100%);
+            color: var(--white);
+        }
+
+        .btn-manual {
+            background: var(--yellow);
+            color: #333;
+        }
+
+        .recall-card {
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--red);
+            border-radius: 8px;
+            background: var(--white);
+        }
+
+        .recall-card.new {
+            background: linear-gradient(135deg, var(--white) 0%, #fff9c4 100%);
+            border-left-color: var(--orange);
+        }
+
+        .recall-card.relevant {
+            background: linear-gradient(135deg, var(--white) 0%, #ffebee 100%);
+            border-left-color: var(--red);
+        }
+
+        .recall-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--teal);
+        }
+
+        .recall-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: var(--red);
+        }
+
+        .hazard-badge {
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+
+        .hazard-class-i {
+            background: var(--red);
+            color: var(--white);
+        }
+
+        .hazard-class-ii {
+            background: var(--orange);
+            color: var(--white);
+        }
+
+        .hazard-class-iii {
+            background: var(--yellow);
+            color: #333;
+        }
+
+        .recall-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            padding: 12px;
+            background: var(--eggshell);
+            border-radius: 4px;
+            border-left: 3px solid var(--teal);
+        }
+
+        .detail-label {
+            font-size: 0.8em;
+            color: var(--teal-dark);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .customer-match {
+            background: linear-gradient(135deg, #ffebee 0%, #fff9c4 100%);
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid var(--red);
+            margin: 15px 0;
+        }
+
+        .match-count {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--red);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-relevant {
+            background: var(--red);
+            color: var(--white);
+            flex: 1;
+        }
+
+        .btn-not-relevant {
+            background: var(--dark-green);
+            color: var(--white);
+            flex: 1;
+        }
+
+        .btn-assess {
+            background: var(--aqua);
+            color: var(--white);
+            flex: 1;
+        }
+
+        .reminder-box {
+            background: var(--orange);
+            color: var(--white);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: 600;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚠️ Food Recall Moderation Dashboard</h1>
+            <div style="margin-top: 10px; font-size: 1.1em; color: var(--teal-dark);">
+                🚬🐸 "Keep the turtles out of the food - they gots salmonella!"
+            </div>
+        </div>
+
+        <div class="warning-box">
+            🔔 REMINDER: Manually check USDA.gov and FDA.gov daily for new recalls!
+        </div>
+
+        <div class="paper">
+            <h2 style="margin-bottom: 20px; color: var(--teal-dark);">📡 Fetch New Recalls</h2>
+            
+            <div class="fetch-buttons">
+                <button class="btn btn-usda" onclick="fetchUSDA()">
+                    🇺🇸 Fetch USDA Recalls
+                </button>
+                <button class="btn btn-fda" onclick="fetchFDA()">
+                    💊 Fetch FDA Recalls
+                </button>
+                <button class="btn btn-manual" onclick="manualCheck()">
+                    👁️ Manual Website Check
+                </button>
+            </div>
+
+            <div class="reminder-box">
+                ⚠️ Always perform manual verification on USDA.gov and FDA.gov
+            </div>
+        </div>
+
+        <div class="paper">
+            <h2 style="margin-bottom: 20px; color: var(--red);">🆕 New Recalls for Review</h2>
+            <div id="newRecalls">
+                <div style="text-align: center; padding: 40px; color: var(--teal-dark);">
+                    No new recalls pending review. Click "Fetch" buttons above to check for updates.
+                </div>
+            </div>
+        </div>
+
+        <div class="paper">
+            <h2 style="margin-bottom: 20px; color: var(--orange);">⚠️ Relevant Recalls - Customer Impact</h2>
+            <div id="relevantRecalls">
+                <!-- Mock data will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        // Mock recall data
+        const mockRecalls = [
+            {
+                id: 'recall-001',
+                source: 'USDA',
+                recall_number: 'USDA-2024-001',
+                recall_date: '2025-10-10',
+                product_name: 'Organic Spinach',
+                company_name: 'Green Farms Inc.',
+                reason_for_recall: 'Potential Salmonella contamination',
+                contamination_type: 'Salmonella',
+                hazard_class: 'Class I',
+                distribution: 'CA, OR, WA',
+                affected_states: ['CA', 'OR', 'WA'],
+                affected_species: ['spinach'],
+                status: 'NEW',
+                customer_matches: 12 // Customers in affected states
+            },
+            {
+                id: 'recall-002',
+                source: 'FDA',
+                recall_number: 'FDA-2024-123',
+                recall_date: '2025-10-12',
+                product_name: 'Fresh Tomatoes',
+                company_name: 'Fresh Produce Co.',
+                reason_for_recall: 'Potential Listeria monocytogenes contamination',
+                contamination_type: 'Listeria',
+                hazard_class: 'Class II',
+                distribution: 'Nationwide',
+                affected_states: ['All States'],
+                affected_species: ['tomato'],
+                status: 'NEW',
+                customer_matches: 45 // We ship tomatoes nationwide
+            }
+        ];
+
+        window.addEventListener('load', () => {
+            loadNewRecalls();
+        });
+
+        function loadNewRecalls() {
+            const container = document.getElementById('newRecalls');
+            
+            const newRecalls = mockRecalls.filter(r => r.status === 'NEW');
+            
+            if (newRecalls.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--dark-green);">✅ No new recalls to review</div>';
+                return;
+            }
+
+            container.innerHTML = newRecalls.map(recall => renderRecallCard(recall)).join('');
+        }
+
+        function renderRecallCard(recall) {
+            const hazardClass = recall.hazard_class.toLowerCase().replace(' ', '-');
+            
+            return `
+                <div class="recall-card ${recall.status.toLowerCase()}">
+                    <div class="recall-header">
+                        <div>
+                            <div class="recall-title">${recall.product_name}</div>
+                            <div style="color: var(--teal-dark); margin-top: 5px;">${recall.company_name}</div>
+                        </div>
+                        <div class="hazard-badge ${hazardClass}">${recall.hazard_class}</div>
+                    </div>
+
+                    <div class="recall-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Recall Number</div>
+                            <div class="detail-value">${recall.recall_number}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Source</div>
+                            <div class="detail-value">${recall.source}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Recall Date</div>
+                            <div class="detail-value">${recall.recall_date}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Distribution</div>
+                            <div class="detail-value">${recall.distribution}</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-item" style="margin: 15px 0;">
+                        <div class="detail-label">Reason for Recall</div>
+                        <div class="detail-value" style="font-size: 1.1em; color: var(--red);">
+                            ⚠️ ${recall.reason_for_recall}
+                        </div>
+                    </div>
+
+                    <div class="customer-match">
+                        <div class="match-count">
+                            🎯 ${recall.customer_matches} customers potentially affected
+                        </div>
+                        <div style="margin-top: 10px; color: var(--teal-dark);">
+                            Based on shipping addresses in: ${recall.affected_states.join(', ')}
+                        </div>
+                        <div style="margin-top: 5px; color: var(--dark-green); font-weight: 600;">
+                            Affected species: ${recall.affected_species.join(', ')}
+                        </div>
+                    </div>
+
+                    <div class="reminder-box">
+                        📋 Manual Check Required: Verify on ${recall.source === 'USDA' ? 'USDA.gov' : 'FDA.gov'} website
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-relevant" onclick="markRelevant('${recall.id}')">
+                            ⚠️ Relevant - Notify Customers
+                        </button>
+                        <button class="btn btn-not-relevant" onclick="markNotRelevant('${recall.id}')">
+                            ✅ Not Relevant
+                        </button>
+                        <button class="btn btn-assess" onclick="assessImpact('${recall.id}')">
+                            🔍 Assess Impact
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function fetchUSDA() {
+            console.log('🇺🇸 Fetching USDA recalls...');
+            
+            try {
+                const response = await fetch(`${API_URL}/recalls/fetch-usda`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`✅ Fetched ${data.recalls_found} USDA recalls\n\n⚠️ REMINDER: Manually verify on USDA.gov!`);
+                    loadNewRecalls();
+                }
+            } catch (error) {
+                alert('⚠️ USDA API fetch simulated.\n\nREMINDER: Always check https://www.fsis.usda.gov/recalls manually!');
+            }
+        }
+
+        async function fetchFDA() {
+            console.log('💊 Fetching FDA recalls...');
+            
+            try {
+                const response = await fetch(`${API_URL}/recalls/fetch-fda`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`✅ Fetched ${data.recalls_found} FDA recalls\n\n⚠️ REMINDER: Manually verify on FDA.gov!`);
+                    loadNewRecalls();
+                }
+            } catch (error) {
+                alert('⚠️ FDA API fetch simulated.\n\nREMINDER: Always check https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts manually!');
+            }
+        }
+
+        function manualCheck() {
+            const urls = [
+                'https://www.fsis.usda.gov/recalls',
+                'https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts',
+                'https://www.cdc.gov/foodsafety/outbreaks/'
+            ];
+            
+            const confirmed = confirm(
+                '📋 Manual Check Reminder\n\n' +
+                'This will open the following sites in new tabs:\n' +
+                '• USDA FSIS Recalls\n' +
+                '• FDA Recalls Database\n' +
+                '• CDC Outbreak List\n\n' +
+                'Please manually review each site for new recalls.\n\n' +
+                'Continue?'
+            );
+            
+            if (confirmed) {
+                urls.forEach(url => window.open(url, '_blank'));
+                alert('✅ Opened recall websites for manual review.\n\nPlease check each site and enter any relevant recalls manually.');
+            }
+        }
+
+        async function markRelevant(recallId) {
+            console.log(`Marking recall ${recallId} as relevant`);
+            
+            const notes = prompt('Enter review notes (why is this relevant to our operations?):');
+            if (!notes) return;
+
+            try {
+                const response = await fetch(`${API_URL}/recalls/review`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        recall_id: recallId,
+                        is_relevant: true,
+                        affected_species: ['tomato'], // TODO: Make dynamic
+                        notes: notes,
+                        manual_check_required: true
+                    })
+                });
+
+                if (response.ok) {
+                    alert('✅ Marked as RELEVANT\n\nNext step: Assess customer impact and notify affected customers.');
+                    loadNewRecalls();
+                }
+            } catch (error) {
+                alert('⚠️ Marked as relevant locally.\n\nStart mock server for full functionality.');
+            }
+        }
+
+        async function markNotRelevant(recallId) {
+            const confirmed = confirm('Mark this recall as NOT RELEVANT?\n\nThis means it does not affect our products or customers.');
+            if (!confirmed) return;
+
+            console.log(`Marking recall ${recallId} as not relevant`);
+            
+            try {
+                const response = await fetch(`${API_URL}/recalls/review`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        recall_id: recallId,
+                        is_relevant: false,
+                        affected_species: [],
+                        notes: 'Not relevant to our operations',
+                        manual_check_required: false
+                    })
+                });
+
+                if (response.ok) {
+                    alert('✅ Marked as NOT RELEVANT');
+                    loadNewRecalls();
+                }
+            } catch (error) {
+                alert('✅ Marked as not relevant.');
+            }
+        }
+
+        async function assessImpact(recallId) {
+            console.log(`Assessing customer impact for recall ${recallId}`);
+            
+            try {
+                const response = await fetch(`${API_URL}/recalls/assess-impact`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        recall_id: recallId
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(
+                        `📊 Impact Assessment\n\n` +
+                        `Affected Customers: ${data.total_customers_affected}\n` +
+                        `Affected Products: ${data.affected_seed_ids.length + data.affected_plant_ids.length}\n` +
+                        `Risk Level: ${data.risk_level}\n\n` +
+                        `${data.requires_customer_notification ? '⚠️ CUSTOMER NOTIFICATION REQUIRED' : '✅ No notification needed'}`
+                    );
+                }
+            } catch (error) {
+                alert('📊 Impact assessment simulated.\n\nMock data shows 12-45 customers potentially affected based on shipping addresses.');
+            }
+        }
+    </script>
+</body>
+</html>
+

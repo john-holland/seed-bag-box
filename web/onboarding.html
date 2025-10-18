@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥑 Welcome to Seed Box Bag Box</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            overflow-x: hidden;
+            background: #f5f5f5;
+        }
+
+        .scene-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            scroll-snap-align: start;
+        }
+
+        .scroll-container {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            height: 100vh;
+        }
+
+        .scene {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .scene h2 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        .scene-text {
+            font-size: 1.3em;
+            max-width: 800px;
+            margin: 30px auto;
+            line-height: 1.6;
+        }
+
+        .small-text {
+            font-size: 0.7em;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 20px 50px;
+            font-size: 1.4em;
+            background: linear-gradient(135deg, #00BCD4 0%, #009688 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 30px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 150, 136, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 150, 136, 0.5);
+        }
+
+        /* Scene 1 - Lime Green, Happy */
+        .scene-1 {
+            background: linear-gradient(135deg, #D7F5DC 0%, #A5D6A7 100%);
+            color: #2E7D32;
+        }
+
+        /* Scene 2 - Grey, Glum */
+        .scene-2 {
+            background: linear-gradient(135deg, #E0E0E0 0%, #BDBDBD 100%);
+            color: #424242;
+        }
+
+        /* Scene 3 - Warmer Green, Success */
+        .scene-3 {
+            background: linear-gradient(135deg, #AED581 0%, #9CCC65 100%);
+            color: #33691E;
+        }
+
+        .illustration {
+            width: 100%;
+            max-width: 800px;
+            height: 500px;
+            margin: 0 auto;
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            font-size: 2em;
+            opacity: 0.7;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-container">
+        <!-- Scene 1: Happy Planting -->
+        <div class="scene-container scene-1">
+            <div class="scene">
+                <h2>Sometimes fruit-bearing plants don't produce fruit</h2>
+                
+                <svg class="illustration" viewBox="0 0 800 500">
+                    <!-- Happy person -->
+                    <circle cx="200" cy="200" r="40" fill="#FFD54F"/>
+                    <!-- Smile -->
+                    <path d="M 185 205 Q 200 215, 215 205" stroke="#F57C00" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <!-- Eyes -->
+                    <circle cx="190" cy="190" r="4" fill="#F57C00"/>
+                    <circle cx="210" cy="190" r="4" fill="#F57C00"/>
+                    
+                    <!-- Body -->
+                    <rect x="175" y="240" width="50" height="80" fill="#4FC3F7" rx="10"/>
+                    <!-- Arms -->
+                    <rect x="150" y="260" width="25" height="10" fill="#4FC3F7" rx="5"/>
+                    <rect x="225" y="260" width="25" height="10" fill="#4FC3F7" rx="5"/>
+                    <!-- Legs -->
+                    <rect x="180" y="320" width="15" height="50" fill="#0288D1" rx="5"/>
+                    <rect x="205" y="320" width="15" height="50" fill="#0288D1" rx="5"/>
+                    
+                    <!-- Planting action - person reaching toward cup -->
+                    <line x1="225" y1="265" x2="320" y2="300" stroke="#4FC3F7" stroke-width="8" stroke-linecap="round"/>
+                    
+                    <!-- Cup/pot -->
+                    <rect x="300" y="300" width="100" height="80" fill="#D7CCC8" rx="5"/>
+                    <path d="M 310 300 L 390 300 L 380 380 L 320 380 Z" fill="#BCAAA4"/>
+                    
+                    <!-- Soil -->
+                    <ellipse cx="350" cy="305" rx="40" ry="8" fill="#6D4C41"/>
+                    
+                    <!-- Tiny seed -->
+                    <circle cx="350" cy="320" r="3" fill="#8D6E63"/>
+                    
+                    <!-- Plant sprout (small) -->
+                    <path d="M 350 320 L 350 290" stroke="#689F38" stroke-width="3"/>
+                    <ellipse cx="345" cy="285" rx="8" ry="5" fill="#9CCC65"/>
+                    <ellipse cx="355" cy="285" rx="8" ry="5" fill="#9CCC65"/>
+                    
+                    <!-- Sparkles of hope -->
+                    <text x="420" y="250" font-size="40" fill="#FFD700">✨</text>
+                    <text x="280" y="270" font-size="30" fill="#FFD700">✨</text>
+                </svg>
+
+                <div class="scene-text">
+                    You plant with hope and excitement... 🌱
+                </div>
+            </div>
+        </div>
+
+        <!-- Scene 2: Disappointment -->
+        <div class="scene-container scene-2">
+            <div class="scene">
+                <h2>Sometimes, like avocados, it's 1 in 10,000</h2>
+                
+                <svg class="illustration" viewBox="0 0 800 500">
+                    <!-- Sad person -->
+                    <circle cx="200" cy="200" r="40" fill="#BDBDBD"/>
+                    <!-- Frown -->
+                    <path d="M 185 215 Q 200 205, 215 215" stroke="#757575" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <!-- Eyes -->
+                    <circle cx="190" cy="190" r="4" fill="#757575"/>
+                    <circle cx="210" cy="190" r="4" fill="#757575"/>
+                    
+                    <!-- Body -->
+                    <rect x="175" y="240" width="50" height="80" fill="#90A4AE" rx="10"/>
+                    <!-- Arms (drooping) -->
+                    <rect x="145" y="270" width="30" height="10" fill="#90A4AE" rx="5" transform="rotate(20 175 275)"/>
+                    <rect x="225" y="270" width="30" height="10" fill="#90A4AE" rx="5" transform="rotate(-20 225 275)"/>
+                    <!-- Legs -->
+                    <rect x="180" y="320" width="15" height="50" fill="#78909C" rx="5"/>
+                    <rect x="205" y="320" width="15" height="50" fill="#78909C" rx="5"/>
+                    
+                    <!-- Clock above head -->
+                    <circle cx="200" cy="120" r="35" fill="#FFFFFF" stroke="#757575" stroke-width="3"/>
+                    <circle cx="200" cy="120" r="5" fill="#757575"/>
+                    <line x1="200" y1="120" x2="200" y2="95" stroke="#757575" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="200" y1="120" x2="220" y2="120" stroke="#757575" stroke-width="2" stroke-linecap="round"/>
+                    
+                    <!-- "MONTHS LATER" text -->
+                    <text x="200" y="70" text-anchor="middle" font-size="24" font-weight="bold" fill="#757575">MONTHS LATER</text>
+                    
+                    <!-- Window sill with plants -->
+                    <rect x="450" y="150" width="300" height="200" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="3"/>
+                    <rect x="455" y="155" width="290" height="190" fill="#B3E5FC" opacity="0.3"/>
+                    
+                    <!-- Window panes -->
+                    <line x1="600" y1="150" x2="600" y2="350" stroke="#9E9E9E" stroke-width="2"/>
+                    <line x1="450" y1="250" x2="750" y2="250" stroke="#9E9E9E" stroke-width="2"/>
+                    
+                    <!-- Plants on sill (NO FRUIT) -->
+                    <g transform="translate(480, 320)">
+                        <rect x="0" y="0" width="40" height="30" fill="#8D6E63"/>
+                        <path d="M 20 0 L 20 -40" stroke="#689F38" stroke-width="3"/>
+                        <ellipse cx="15" cy="-45" rx="10" ry="8" fill="#9CCC65"/>
+                        <ellipse cx="25" cy="-45" rx="10" ry="8" fill="#9CCC65"/>
+                        <ellipse cx="20" cy="-55" rx="10" ry="8" fill="#9CCC65"/>
+                    </g>
+                    
+                    <g transform="translate(560, 320)">
+                        <rect x="0" y="0" width="40" height="30" fill="#8D6E63"/>
+                        <path d="M 20 0 L 20 -50" stroke="#689F38" stroke-width="3"/>
+                        <ellipse cx="15" cy="-50" rx="12" ry="9" fill="#9CCC65"/>
+                        <ellipse cx="25" cy="-50" rx="12" ry="9" fill="#9CCC65"/>
+                    </g>
+                    
+                    <g transform="translate(640, 320)">
+                        <rect x="0" y="0" width="40" height="30" fill="#8D6E63"/>
+                        <path d="M 20 0 L 20 -35" stroke="#689F38" stroke-width="3"/>
+                        <ellipse cx="20" cy="-40" rx="10" ry="8" fill="#9CCC65"/>
+                    </g>
+                    
+                    <!-- Sad face emoji near plants -->
+                    <text x="600" y="380" font-size="30" fill="#757575">😔</text>
+                </svg>
+
+                <div class="scene-text">
+                    Months of care... and nothing. 😔<br>
+                    <strong>Only 1 in 10,000 avocado plants actually fruit.</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scene 3: Success with Seed Box Bag Box -->
+        <div class="scene-container scene-3">
+            <div class="scene">
+                <h2>Join Seed Box Bag Box and receive TRUE fruiting plants!</h2>
+                
+                <svg class="illustration" viewBox="0 0 800 500">
+                    <!-- Super happy person -->
+                    <circle cx="200" cy="200" r="40" fill="#FFD54F"/>
+                    <!-- Big smile -->
+                    <path d="M 180 205 Q 200 220, 220 205" stroke="#F57C00" stroke-width="4" fill="none" stroke-linecap="round"/>
+                    <!-- Eyes -->
+                    <circle cx="190" cy="190" r="5" fill="#F57C00"/>
+                    <circle cx="210" cy="190" r="5" fill="#F57C00"/>
+                    <!-- Excited eyebrows -->
+                    <path d="M 180 175 L 195 180" stroke="#F57C00" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M 220 175 L 205 180" stroke="#F57C00" stroke-width="3" stroke-linecap="round"/>
+                    
+                    <!-- Body -->
+                    <rect x="175" y="240" width="50" height="80" fill="#4FC3F7" rx="10"/>
+                    <!-- Arms (excited) -->
+                    <rect x="145" y="250" width="30" height="10" fill="#4FC3F7" rx="5" transform="rotate(-30 175 255)"/>
+                    <rect x="225" y="250" width="30" height="10" fill="#4FC3F7" rx="5" transform="rotate(30 225 255)"/>
+                    <!-- Legs -->
+                    <rect x="180" y="320" width="15" height="50" fill="#0288D1" rx="5"/>
+                    <rect x="205" y="320" width="15" height="50" fill="#0288D1" rx="5"/>
+                    
+                    <!-- Clothesline cord -->
+                    <line x1="350" y1="100" x2="750" y2="100" stroke="#795548" stroke-width="4"/>
+                    
+                    <!-- Multiple plants hanging in bags from coat hangers -->
+                    
+                    <!-- Plant 1 -->
+                    <g transform="translate(380, 100)">
+                        <!-- Coat hanger -->
+                        <path d="M -15 0 L -15 -10 Q 0 -20, 15 -10 L 15 0" stroke="#757575" stroke-width="2" fill="none"/>
+                        <!-- Hook -->
+                        <path d="M 0 -20 Q 0 -25, 5 -25" stroke="#757575" stroke-width="2" fill="none"/>
+                        
+                        <!-- Plastic bag -->
+                        <path d="M -20 10 L -25 80 Q -25 90, 0 90 Q 25 90, 25 80 L 20 10 Z" fill="rgba(200, 230, 201, 0.7)" stroke="#81C784" stroke-width="2"/>
+                        <!-- Bag handles -->
+                        <path d="M -15 10 Q -15 0, -5 0" stroke="#81C784" stroke-width="2" fill="none"/>
+                        <path d="M 15 10 Q 15 0, 5 0" stroke="#81C784" stroke-width="2" fill="none"/>
+                        
+                        <!-- Rubber band at bottom -->
+                        <ellipse cx="0" cy="88" rx="25" ry="4" fill="#D84315"/>
+                        
+                        <!-- Avocado plant inside -->
+                        <path d="M 0 80 L 0 30" stroke="#689F38" stroke-width="3"/>
+                        <ellipse cx="-8" cy="25" rx="10" ry="12" fill="#7CB342"/>
+                        <ellipse cx="8" cy="25" rx="10" ry="12" fill="#7CB342"/>
+                        
+                        <!-- AVOCADO FRUIT! -->
+                        <ellipse cx="-10" cy="45" rx="8" ry="10" fill="#558B2F" stroke="#33691E" stroke-width="1"/>
+                        <ellipse cx="5" cy="50" rx="8" ry="10" fill="#558B2F" stroke="#33691E" stroke-width="1"/>
+                    </g>
+                    
+                    <!-- Plant 2 -->
+                    <g transform="translate(480, 100)">
+                        <path d="M -15 0 L -15 -10 Q 0 -20, 15 -10 L 15 0" stroke="#757575" stroke-width="2" fill="none"/>
+                        <path d="M 0 -20 Q 0 -25, 5 -25" stroke="#757575" stroke-width="2" fill="none"/>
+                        <path d="M -20 10 L -25 80 Q -25 90, 0 90 Q 25 90, 25 80 L 20 10 Z" fill="rgba(200, 230, 201, 0.7)" stroke="#81C784" stroke-width="2"/>
+                        <path d="M -15 10 Q -15 0, -5 0" stroke="#81C784" stroke-width="2" fill="none"/>
+                        <path d="M 15 10 Q 15 0, 5 0" stroke="#81C784" stroke-width="2" fill="none"/>
+                        <ellipse cx="0" cy="88" rx="25" ry="4" fill="#D84315"/>
+                        <path d="M 0 80 L 0 25" stroke="#689F38" stroke-width="3"/>
+                        <ellipse cx="-10" cy="20" rx="12" ry="14" fill="#7CB342"/>
+                        <ellipse cx="10" cy="20" rx="12" ry="14" fill="#7CB342"/>
+                        <!-- FRUITS! -->
+                        <ellipse cx="-12" cy="40" rx="7" ry="9" fill="#558B2F" stroke="#33691E" stroke-width="1"/>
+                        <ellipse cx="8" cy="45" rx="7" ry="9" fill="#558B2F" stroke="#33691E" stroke-width="1"/>
+                        <ellipse cx="0" cy="52" rx="7" ry="9" fill="#558B2F" stroke="#33691E" stroke-width="1"/>
+                    </g>
+                    
+                    <!-- Plant 3 -->
+                    <g transform="translate(580, 100)">
+                        <path d="M -15 0 L -15 -10 Q 0 -20, 15 -10 L 15 0" stroke="#757575" stroke-width="2" fill="none"/>
+                        <path d="M 0 -20 Q 0 -25, 5 -25" stroke="#757575" stroke-width="2" fill="none"/>
+                        <path d="M -20 10 L -25 80 Q -25 90, 0 90 Q 25 90, 25 80 L 20 10 Z" fill="rgba(200, 230, 201, 0.7)" stroke="#81C784" stroke-width="2"/>
+                        <path d="M -15 10 Q -15 0, -5 0" stroke="#81C784" stroke-width="2" fill="none"/>
+                        <path d="M 15 10 Q 15 0, 5 0" stroke="#81C784" stroke-width="2" fill="none"/>
+                        <ellipse cx="0" cy="88" rx="25" ry="4" fill="#D84315"/>
+                        <path d="M 0 80 L 0 30" stroke="#689F38" stroke-width="3"/>
+                        <ellipse cx="-9" cy="25" rx="11" ry="13" fill="#7CB342"/>
+                        <ellipse cx="9" cy="25" rx="11" ry="13" fill="#7CB342"/>
+                        <!-- FRUITS! -->
+                        <ellipse cx="-8" cy="48" rx="8" ry="10" fill="#558B2F" stroke="#33691E" stroke-width="1"/>
+                        <ellipse cx="10" cy="50" rx="8" ry="10" fill="#558B2F" stroke="#33691E" stroke-width="1"/>
+                    </g>
+                    
+                    <!-- Plant 4 -->
+                    <g transform="translate(680, 100)">
+                        <path d="M -15 0 L -15 -10 Q 0 -20, 15 -10 L 15 0" stroke="#757575" stroke-width="2" fill="none"/>
+                        <path d="M 0 -20 Q 0 -25, 5 -25" stroke="#757575" stroke-width="2" fill="none"/>
+                        <path d="M -20 10 L -25 80 Q -25 90, 0 90 Q 25 90, 25 80 L 20 10 Z" fill="rgba(200, 230, 201, 0.7)" stroke="#81C784" stroke-width="2"/>
+                        <path d="M -15 10 Q -15 0, -5 0" stroke="#81C784" stroke-width="2" fill="none"/>
+                        <path d="M 15 10 Q 15 0, 5 0" stroke="#81C784" stroke-width="2" fill="none"/>
+                        <ellipse cx="0" cy="88" rx="25" ry="4" fill="#D84315"/>
+                        <path d="M 0 80 L 0 35" stroke="#689F38" stroke-width="3"/>
+                        <ellipse cx="-7" cy="30" rx="10" ry="12" fill="#7CB342"/>
+                        <ellipse cx="7" cy="30" rx="10" ry="12" fill="#7CB342"/>
+                        <!-- FRUITS! -->
+                        <ellipse cx="-5" cy="50" rx="7" ry="9" fill="#558B2F" stroke="#33691E" stroke-width="1"/>
+                        <ellipse cx="6" cy="48" rx="7" ry="9" fill="#558B2F" stroke="#33691E" stroke-width="1"/>
+                    </g>
+                    
+                    <!-- Success label -->
+                    <text x="565" y="420" text-anchor="middle" font-size="28" font-weight="bold" fill="#558B2F">🥑 ALL FRUITING! 🥑</text>
+                </svg>
+
+                <div class="scene-text">
+                    Our system verifies <strong>TRUE fruiting plants</strong> at the sprouting stage.<br>
+                    <span class="small-text">
+                        (Seeds delivered as sprouting or sapling. Join now for higher percentage yield on avocados!)
+                    </span>
+                </div>
+
+                <a href="plant-lookup.html" class="cta-button">
+                    🥑 Become the Avocado Proletariat 🥑
+                </a>
+
+                <div class="scene-text" style="margin-top: 40px; font-size: 1em;">
+                    <strong>How it works:</strong><br>
+                    We germinate seeds to the "True Plant" stage, verify fruiting potential,<br>
+                    and ship you young plants with proven genetics.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="scroll-indicator">⬇️</div>
+
+    <script>
+        // Hide scroll indicator on last scene
+        const scrollContainer = document.querySelector('.scroll-container');
+        scrollContainer.addEventListener('scroll', () => {
+            const scrollPercent = scrollContainer.scrollTop / (scrollContainer.scrollHeight - scrollContainer.clientHeight);
+            const indicator = document.querySelector('.scroll-indicator');
+            if (scrollPercent > 0.9) {
+                indicator.style.opacity = '0';
+            } else {
+                indicator.style.opacity = '0.7';
+            }
+        });
+    </script>
+</body>
+</html>
+

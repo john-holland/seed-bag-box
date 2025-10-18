@@ -7,6 +7,7 @@ pub mod contamination;
 pub mod germination;
 pub mod manufacturing;
 pub mod images;
+pub mod recalls;
 
 pub use subscription::*;
 pub use shipping::*;
@@ -17,4 +18,5 @@ pub use contamination::*;
 pub use germination::*;
 pub use manufacturing::*;
 pub use images::*;
+pub use recalls::*;
 
