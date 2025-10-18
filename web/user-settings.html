@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚙️ User Settings - Seed Box Bag Box</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --light-green: #C8E6C9;
+            --medium-green: #81C784;
+            --dark-green: #4CAF50;
+            --eggshell: #F5F5DC;
+            --white: #FFFFFF;
+            --light-blue: #B3E5FC;
+            --medium-blue: #4FC3F7;
+            --dark-blue: #0288D1;
+            --aqua: #00BCD4;
+            --teal: #009688;
+            --teal-dark: #00796B;
+            --orange: #ff9800;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--eggshell) 0%, var(--light-green) 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .paper {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--teal);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: var(--teal-dark);
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        /* User Presence Indicator */
+        .user-presence {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--light-blue) 100%);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 2px solid var(--teal);
+        }
+
+        .presence-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--aqua);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: var(--white);
+            position: relative;
+        }
+
+        .presence-dot {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4CAF50;
+            border: 3px solid var(--white);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .presence-info {
+            text-align: left;
+        }
+
+        .presence-name {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: var(--teal-dark);
+        }
+
+        .presence-status {
+            font-size: 0.9em;
+            color: var(--dark-green);
+            font-weight: 500;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: var(--teal-dark);
+            margin-bottom: 20px;
+            font-weight: 500;
+            border-bottom: 2px solid var(--teal);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 1em;
+            color: var(--teal-dark);
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1em;
+            border: 2px solid var(--light-blue);
+            border-radius: 4px;
+            background: var(--eggshell);
+            color: var(--teal-dark);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--aqua);
+            background: var(--white);
+            box-shadow: 0 2px 8px rgba(0, 188, 212, 0.2);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 15px;
+            font-size: 1em;
+            border: 2px solid var(--light-blue);
+            border-radius: 4px;
+            background: var(--white);
+            color: var(--teal-dark);
+            cursor: pointer;
+        }
+
+        /* Toggle Switch for Cannabis Opt-in */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--eggshell) 100%);
+            border-radius: 8px;
+            border: 3px solid var(--teal);
+            margin-bottom: 15px;
+        }
+
+        .toggle-label {
+            flex: 1;
+        }
+
+        .toggle-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--teal-dark);
+            margin-bottom: 5px;
+        }
+
+        .toggle-description {
+            font-size: 0.9em;
+            color: var(--dark-green);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            margin-left: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #ccc;
+            transition: 0.4s;
+            border-radius: 30px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background: var(--white);
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background: var(--dark-green);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        /* Cannabis Warning Box */
+        .cannabis-warning {
+            padding: 20px;
+            background: linear-gradient(135deg, #fff9c4 0%, #ffecb3 100%);
+            border: 3px solid var(--orange);
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .cannabis-warning.active {
+            display: block;
+        }
+
+        .warning-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #E65100;
+            margin-bottom: 10px;
+        }
+
+        .warning-text {
+            font-size: 0.95em;
+            color: #F57C00;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .legal-states {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .state-chip {
+            padding: 6px 12px;
+            background: var(--light-green);
+            border: 2px solid var(--dark-green);
+            border-radius: 12px;
+            text-align: center;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: var(--dark-green);
+        }
+
+        .state-chip.illegal {
+            background: #ffcdd2;
+            border-color: #f44336;
+            color: #c62828;
+        }
+
+        .save-button {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.2em;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--aqua) 0%, var(--teal) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .save-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 150, 136, 0.4);
+        }
+
+        .info-box {
+            padding: 15px;
+            background: var(--light-blue);
+            border-left: 4px solid var(--aqua);
+            border-radius: 4px;
+            color: var(--dark-blue);
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .preferences-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .pref-card {
+            padding: 15px;
+            background: var(--eggshell);
+            border: 2px solid var(--teal);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pref-card:hover {
+            background: var(--light-green);
+            transform: translateY(-3px);
+        }
+
+        .pref-card.selected {
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--light-blue) 100%);
+            border-color: var(--aqua);
+            border-width: 3px;
+        }
+
+        .pref-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .pref-title {
+            font-weight: 600;
+            color: var(--teal-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ User Settings</h1>
+            <div style="margin-top: 15px;">
+                <a href="index.html" style="color: var(--teal); text-decoration: none; font-weight: 600;">
+                    ← Back to Home
+                </a>
+            </div>
+        </div>
+
+        <!-- User Presence -->
+        <div class="user-presence">
+            <div class="presence-avatar">
+                🌱
+                <div class="presence-dot"></div>
+            </div>
+            <div class="presence-info">
+                <div class="presence-name" id="userName">Avocado Enthusiast</div>
+                <div class="presence-status">🟢 Active - Last seen just now</div>
+            </div>
+        </div>
+
+        <!-- Shipping Address -->
+        <div class="paper">
+            <div class="section-title">📍 Shipping Address</div>
+            
+            <div class="form-group">
+                <label class="form-label">State</label>
+                <select class="form-select" id="stateSelect" onchange="checkCannabisLegality()">
+                    <option value="">Select your state...</option>
+                    <option value="CA">California</option>
+                    <option value="OR">Oregon</option>
+                    <option value="WA">Washington</option>
+                    <option value="CO">Colorado</option>
+                    <option value="NY">New York</option>
+                    <option value="MA">Massachusetts</option>
+                    <option value="NV">Nevada</option>
+                    <option value="IL">Illinois</option>
+                    <option value="MI">Michigan</option>
+                    <option value="AZ">Arizona</option>
+                    <option value="NJ">New Jersey</option>
+                    <option value="MT">Montana</option>
+                    <option value="VT">Vermont</option>
+                    <option value="NM">New Mexico</option>
+                    <option value="CT">Connecticut</option>
+                    <option value="RI">Rhode Island</option>
+                    <option value="ME">Maine</option>
+                    <option value="AK">Alaska</option>
+                    <option value="--" disabled>---</option>
+                    <option value="TX">Texas</option>
+                    <option value="FL">Florida</option>
+                    <option value="GA">Georgia</option>
+                    <option value="NC">North Carolina</option>
+                    <option value="OH">Ohio</option>
+                    <option value="PA">Pennsylvania</option>
+                    <option value="AL">Alabama</option>
+                    <option value="ID">Idaho</option>
+                    <option value="KS">Kansas</option>
+                    <option value="OTHER">Other State</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">City</label>
+                <input type="text" class="form-input" id="city" placeholder="Portland">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Zip Code</label>
+                <input type="text" class="form-input" id="zip" placeholder="97201">
+            </div>
+
+            <div class="info-box">
+                ℹ️ Your shipping address helps us match relevant food safety recalls and comply with state regulations.
+            </div>
+        </div>
+
+        <!-- Plant Preferences -->
+        <div class="paper">
+            <div class="section-title">🌱 Plant Preferences</div>
+            
+            <div class="preferences-grid">
+                <div class="pref-card selected" onclick="togglePref(this)">
+                    <div class="pref-icon">🍅</div>
+                    <div class="pref-title">Vegetables</div>
+                </div>
+                <div class="pref-card selected" onclick="togglePref(this)">
+                    <div class="pref-icon">🌿</div>
+                    <div class="pref-title">Herbs</div>
+                </div>
+                <div class="pref-card" onclick="togglePref(this)">
+                    <div class="pref-icon">🍉</div>
+                    <div class="pref-title">Melons</div>
+                </div>
+                <div class="pref-card" onclick="togglePref(this)">
+                    <div class="pref-icon">🌾</div>
+                    <div class="pref-title">Grains</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cannabis Opt-In -->
+        <div class="paper">
+            <div class="section-title">🌿 Cannabis Program (Optional)</div>
+            
+            <div class="toggle-container">
+                <div class="toggle-label">
+                    <div class="toggle-title">🌿 Enable Cannabis Seeds & Plants</div>
+                    <div class="toggle-description">
+                        Opt-in to receive cannabis genetics (subject to state laws)
+                    </div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="cannabisToggle" onchange="toggleCannabis()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div id="cannabisWarning" class="cannabis-warning">
+                <div class="warning-title">⚠️ LEGAL COMPLIANCE REQUIRED</div>
+                <div class="warning-text">
+                    <strong>Before opting in, please confirm:</strong>
+                </div>
+                <ul style="margin-left: 20px; margin-bottom: 15px; color: #F57C00;">
+                    <li>You are 21+ years of age</li>
+                    <li>Cannabis cultivation is legal in your state</li>
+                    <li>You comply with all local/state regulations</li>
+                    <li>You will not resell or distribute illegally</li>
+                    <li>You understand federal law may differ from state law</li>
+                </ul>
+                
+                <div class="warning-text">
+                    <strong>Your state:</strong> <span id="selectedState">Not selected</span>
+                </div>
+                <div class="warning-text" id="legalityStatus"></div>
+
+                <div class="warning-text" style="margin-top: 15px; font-weight: 700;">
+                    📋 States where adult-use cannabis is legal (as of 2025):
+                </div>
+                <div class="legal-states" id="legalStates">
+                    <div class="state-chip">CA</div>
+                    <div class="state-chip">OR</div>
+                    <div class="state-chip">WA</div>
+                    <div class="state-chip">CO</div>
+                    <div class="state-chip">NY</div>
+                    <div class="state-chip">MA</div>
+                    <div class="state-chip">NV</div>
+                    <div class="state-chip">IL</div>
+                    <div class="state-chip">MI</div>
+                    <div class="state-chip">AZ</div>
+                    <div class="state-chip">NJ</div>
+                    <div class="state-chip">MT</div>
+                    <div class="state-chip">VT</div>
+                    <div class="state-chip">NM</div>
+                    <div class="state-chip">CT</div>
+                    <div class="state-chip">RI</div>
+                    <div class="state-chip">ME</div>
+                    <div class="state-chip">AK</div>
+                </div>
+
+                <div class="info-box" style="margin-top: 20px;">
+                    ⚠️ <strong>Important:</strong> This list may not be current. Always verify current laws in your jurisdiction. 
+                    Medical cannabis programs may have different requirements.
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: #fff; border-radius: 8px; border: 2px solid var(--teal);">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="cannabisAcknowledge" style="width: 20px; height: 20px; cursor: pointer;">
+                        <span style="color: var(--teal-dark); font-weight: 600;">
+                            I confirm I meet all legal requirements and compliance obligations
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subscription Preferences -->
+        <div class="paper">
+            <div class="section-title">📦 Subscription Preferences</div>
+            
+            <div class="form-group">
+                <label class="form-label">Delivery Frequency</label>
+                <select class="form-select" id="deliveryFrequency">
+                    <option value="weekly">Weekly</option>
+                    <option value="biweekly" selected>Every 2 Weeks</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="as-ready">As Ready (when plants are ready to ship)</option>
+                </select>
+            </div>
+
+            <div class="toggle-container">
+                <div class="toggle-label">
+                    <div class="toggle-title">🍅 Prefer Edible Fruit Species</div>
+                    <div class="toggle-description">
+                        Prioritize tomatoes, peppers, melons, etc.
+                    </div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-container">
+                <div class="toggle-label">
+                    <div class="toggle-title">📧 Recall Notifications</div>
+                    <div class="toggle-description">
+                        Receive email alerts about food safety recalls
+                    </div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <button class="save-button" onclick="saveSettings()">
+            💾 Save Settings
+        </button>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        const LEGAL_CANNABIS_STATES = [
+            'CA', 'OR', 'WA', 'CO', 'NY', 'MA', 'NV', 'IL', 'MI', 'AZ', 
+            'NJ', 'MT', 'VT', 'NM', 'CT', 'RI', 'ME', 'AK'
+        ];
+
+        function toggleCannabis() {
+            const toggle = document.getElementById('cannabisToggle');
+            const warning = document.getElementById('cannabisWarning');
+            
+            if (toggle.checked) {
+                warning.classList.add('active');
+                checkCannabisLegality();
+            } else {
+                warning.classList.remove('active');
+            }
+        }
+
+        function checkCannabisLegality() {
+            const state = document.getElementById('stateSelect').value;
+            const statusDiv = document.getElementById('legalityStatus');
+            const selectedStateSpan = document.getElementById('selectedState');
+            const toggle = document.getElementById('cannabisToggle');
+            const acknowledge = document.getElementById('cannabisAcknowledge');
+            
+            if (!state) {
+                selectedStateSpan.textContent = 'Not selected';
+                statusDiv.innerHTML = '';
+                return;
+            }
+
+            selectedStateSpan.textContent = state;
+
+            if (LEGAL_CANNABIS_STATES.includes(state)) {
+                statusDiv.innerHTML = `
+                    <div style="color: #4CAF50; font-weight: 700; font-size: 1.1em;">
+                        ✅ Cannabis is legal for adult use in ${state}
+                    </div>
+                    <div style="margin-top: 5px;">
+                        You may opt-in to cannabis program (verify local laws apply).
+                    </div>
+                `;
+            } else {
+                statusDiv.innerHTML = `
+                    <div style="color: #f44336; font-weight: 700; font-size: 1.1em;">
+                        ❌ Cannabis cultivation is NOT legal for adult use in ${state}
+                    </div>
+                    <div style="margin-top: 5px;">
+                        You cannot opt-in to cannabis program from this state.
+                    </div>
+                `;
+                // Auto-disable cannabis toggle
+                toggle.checked = false;
+                acknowledge.checked = false;
+                document.getElementById('cannabisWarning').classList.remove('active');
+            }
+        }
+
+        function togglePref(element) {
+            element.classList.toggle('selected');
+        }
+
+        async function saveSettings() {
+            const state = document.getElementById('stateSelect').value;
+            const city = document.getElementById('city').value;
+            const zip = document.getElementById('zip').value;
+            const cannabisEnabled = document.getElementById('cannabisToggle').checked;
+            const cannabisAcknowledged = document.getElementById('cannabisAcknowledge').checked;
+            const deliveryFrequency = document.getElementById('deliveryFrequency').value;
+
+            // Validation
+            if (!state) {
+                alert('Please select your state');
+                return;
+            }
+
+            if (cannabisEnabled && !cannabisAcknowledged) {
+                alert('⚠️ Please acknowledge the legal requirements to enable cannabis program');
+                return;
+            }
+
+            if (cannabisEnabled && !LEGAL_CANNABIS_STATES.includes(state)) {
+                alert('❌ Cannabis program not available in your state');
+                return;
+            }
+
+            const settings = {
+                shipping_address: { state, city, zip },
+                cannabis_opt_in: cannabisEnabled,
+                cannabis_acknowledged: cannabisAcknowledged,
+                delivery_frequency: deliveryFrequency,
+                preferences: {
+                    edible_fruit: true,
+                    recall_notifications: true
+                },
+                user_name: document.getElementById('userName').textContent,
+                user_emoji: '🌱'
+            };
+
+            console.log('Saving settings:', settings);
+
+            // Save to localStorage
+            try {
+                localStorage.setItem('userSettings', JSON.stringify(settings));
+                console.log('✅ Saved to localStorage');
+            } catch (error) {
+                console.error('Failed to save to localStorage:', error);
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/user/settings`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(settings)
+                });
+
+                if (response.ok) {
+                    alert('✅ Settings saved successfully!');
+                } else {
+                    throw new Error('API error');
+                }
+            } catch (error) {
+                alert('✅ Settings saved locally!\n\n' + 
+                      (cannabisEnabled ? '🌿 Cannabis program enabled\n' : '🚫 Cannabis program disabled\n') +
+                      `📍 State: ${state}\n` +
+                      `📦 Delivery: ${deliveryFrequency}\n\n` +
+                      'Settings will apply to plant lookup and search.\n' +
+                      'Start mock server for full API integration.');
+            }
+        }
+
+        // Load user data on page load
+        window.addEventListener('load', () => {
+            // Try to load from localStorage
+            try {
+                const saved = localStorage.getItem('userSettings');
+                if (saved) {
+                    const settings = JSON.parse(saved);
+                    
+                    // Load shipping address
+                    if (settings.shipping_address) {
+                        document.getElementById('stateSelect').value = settings.shipping_address.state || 'OR';
+                        document.getElementById('city').value = settings.shipping_address.city || 'Portland';
+                        document.getElementById('zip').value = settings.shipping_address.zip || '97201';
+                    }
+                    
+                    // Load cannabis setting
+                    if (settings.cannabis_opt_in) {
+                        document.getElementById('cannabisToggle').checked = true;
+                        toggleCannabis();
+                        if (settings.cannabis_acknowledged) {
+                            document.getElementById('cannabisAcknowledge').checked = true;
+                        }
+                    }
+                    
+                    // Load delivery frequency
+                    if (settings.delivery_frequency) {
+                        document.getElementById('deliveryFrequency').value = settings.delivery_frequency;
+                    }
+                    
+                    // Load user name
+                    if (settings.user_name) {
+                        document.getElementById('userName').textContent = settings.user_name;
+                    }
+                    
+                    console.log('✅ Loaded saved settings');
+                } else {
+                    // Default mock user data
+                    document.getElementById('city').value = 'Portland';
+                    document.getElementById('zip').value = '97201';
+                    document.getElementById('stateSelect').value = 'OR';
+                }
+            } catch (error) {
+                // Default mock user data if error
+                document.getElementById('city').value = 'Portland';
+                document.getElementById('zip').value = '97201';
+                document.getElementById('stateSelect').value = 'OR';
+            }
+            
+            checkCannabisLegality();
+        });
+    </script>
+</body>
+</html>
+

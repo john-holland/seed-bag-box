@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seed Box Bag Box - Web Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .page-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .page-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 25px;
+            text-decoration: none;
+            color: white;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .page-card h2 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-card p {
+            font-size: 0.95em;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .icon {
+            font-size: 1.5em;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .page-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 Seed Box Bag Box</h1>
+        <p class="subtitle">Web Interface Portal</p>
+
+        <div class="page-grid">
+            <a href="onboarding.html" class="page-card">
+                <h2><span class="icon">🚀</span> Onboarding</h2>
+                <p>Get started with your seed subscription and setup your account</p>
+            </a>
+
+            <a href="plant-lookup.html" class="page-card">
+                <h2><span class="icon">🔍</span> Plant Lookup</h2>
+                <p>Search and explore plant information and growing guides</p>
+            </a>
+
+            <a href="my-images.html" class="page-card">
+                <h2><span class="icon">📸</span> My Images</h2>
+                <p>View and manage your uploaded plant images</p>
+            </a>
+
+            <a href="image-moderation.html" class="page-card">
+                <h2><span class="icon">🖼️</span> Image Moderation</h2>
+                <p>Review and moderate user-submitted plant images</p>
+            </a>
+
+            <a href="manufacturing-queue.html" class="page-card">
+                <h2><span class="icon">🔫</span> Manufacturing Queue</h2>
+                <p>Scanner gun interface for warehouse operations</p>
+            </a>
+
+            <a href="recall-moderation.html" class="page-card">
+                <h2><span class="icon">⚠️</span> Recall Moderation</h2>
+                <p>Manage and moderate product recalls and safety alerts</p>
+            </a>
+
+            <a href="user-settings.html" class="page-card">
+                <h2><span class="icon">⚙️</span> User Settings</h2>
+                <p>Configure your account preferences and notifications</p>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>Keep Portland Weird 🦇</p>
+            <p><a href="README.md">View Documentation</a></p>
+        </div>
+    </div>
+</body>
+</html>
+

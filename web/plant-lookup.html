@@ -143,6 +143,137 @@
             font-weight: 400;
         }
 
+        /* User Presence Section */
+        .presence-section {
+            padding: 20px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--light-blue) 100%);
+            border-radius: 8px;
+            border: 2px solid var(--teal);
+        }
+
+        .presence-title {
+            font-size: 0.9em;
+            color: var(--teal-dark);
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .presence-users {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .presence-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: var(--white);
+            border-radius: 20px;
+            border: 2px solid var(--teal);
+            font-size: 0.9em;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .presence-avatar-small {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--aqua);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1em;
+            position: relative;
+        }
+
+        .presence-dot-small {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4CAF50;
+            border: 2px solid var(--white);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+
+        .presence-name {
+            font-weight: 600;
+            color: var(--teal-dark);
+        }
+
+        .presence-action {
+            font-size: 0.85em;
+            color: var(--dark-green);
+            margin-left: 5px;
+        }
+
+        /* Settings Banner */
+        .settings-banner {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff9c4 0%, #ffecb3 100%);
+            border-radius: 8px;
+            border: 2px solid var(--orange);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .settings-banner.cannabis-enabled {
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--light-blue) 100%);
+            border-color: var(--teal);
+        }
+
+        .banner-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .banner-icon {
+            font-size: 1.5em;
+        }
+
+        .banner-text {
+            font-weight: 600;
+            color: var(--teal-dark);
+        }
+
+        .banner-link {
+            padding: 8px 16px;
+            background: var(--teal);
+            color: var(--white);
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .banner-link:hover {
+            background: var(--teal-dark);
+            transform: translateY(-2px);
+        }
+
         /* Search Bar */
         .search-section {
             padding: 30px;
@@ -848,6 +979,28 @@
         <div class="header">
             <h1>🌱 Plant Lookup & Search</h1>
             <div class="subtitle">Seed Box Bag Box - Germination Tracking System</div>
+            <div style="margin-top: 15px;">
+                <a href="index.html" style="color: var(--teal); text-decoration: none; font-weight: 600;">
+                    ← Back to Home
+                </a>
+            </div>
+        </div>
+
+        <!-- User Presence -->
+        <div class="paper presence-section">
+            <div class="presence-title">👥 Active Users</div>
+            <div class="presence-users" id="activeUsers">
+                <!-- Users will be populated dynamically -->
+            </div>
+        </div>
+
+        <!-- Settings Banner -->
+        <div id="settingsBanner" class="paper settings-banner" style="display: none;">
+            <div class="banner-content">
+                <span class="banner-icon" id="bannerIcon">🚫</span>
+                <span class="banner-text" id="bannerText">Cannabis filtered (opt-out)</span>
+            </div>
+            <a href="user-settings.html" class="banner-link">⚙️ Settings</a>
         </div>
 
         <!-- Stats -->
@@ -930,6 +1083,18 @@
         const API_URL = 'http://localhost:3000';
         let currentFilter = 'all';
         let allData = [];
+        let userSettings = {
+            cannabis_opt_in: false,
+            user_name: 'Avocado Enthusiast',
+            user_emoji: '🌱'
+        };
+
+        // Mock active users for presence
+        const mockActiveUsers = [
+            { name: 'Avocado Enthusiast', emoji: '🌱', action: 'searching' },
+            { name: 'Tomato Guru', emoji: '🍅', action: 'viewing plants' },
+            { name: 'Basil Boss', emoji: '🌿', action: 'browsing seeds' }
+        ];
 
         // Sample mock data for demo
         const mockData = [
@@ -1084,11 +1249,71 @@
             },
         ];
 
+        // Load user settings from localStorage
+        function loadUserSettings() {
+            try {
+                const saved = localStorage.getItem('userSettings');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    userSettings = { ...userSettings, ...parsed };
+                    console.log('📋 Loaded user settings:', userSettings);
+                }
+            } catch (error) {
+                console.log('Using default settings');
+            }
+        }
+
+        // Display active users with presence
+        function displayActiveUsers() {
+            const container = document.getElementById('activeUsers');
+            
+            // Randomly show 1-3 users for demo
+            const numUsers = Math.floor(Math.random() * 3) + 1;
+            const shuffled = [...mockActiveUsers].sort(() => 0.5 - Math.random());
+            const activeNow = shuffled.slice(0, numUsers);
+            
+            container.innerHTML = activeNow.map(user => `
+                <div class="presence-user">
+                    <div class="presence-avatar-small">
+                        ${user.emoji}
+                        <div class="presence-dot-small"></div>
+                    </div>
+                    <span class="presence-name">${user.name}</span>
+                    <span class="presence-action">• ${user.action}</span>
+                </div>
+            `).join('');
+        }
+
+        // Update settings banner based on user preferences
+        function updateSettingsBanner() {
+            const banner = document.getElementById('settingsBanner');
+            const icon = document.getElementById('bannerIcon');
+            const text = document.getElementById('bannerText');
+            
+            if (!userSettings.cannabis_opt_in) {
+                banner.style.display = 'flex';
+                banner.classList.remove('cannabis-enabled');
+                icon.textContent = '🚫';
+                text.textContent = 'Cannabis filtered (opt-out) • Change in settings';
+            } else {
+                banner.style.display = 'flex';
+                banner.classList.add('cannabis-enabled');
+                icon.textContent = '🌿';
+                text.textContent = 'Cannabis program enabled • All species visible';
+            }
+        }
+
         // Initialize on load
         window.addEventListener('load', async () => {
+            loadUserSettings();
+            updateSettingsBanner();
+            displayActiveUsers();
             await loadData();
             updateStats();
             performSearch(); // Show all results initially
+
+            // Update presence every 10 seconds
+            setInterval(displayActiveUsers, 10000);
 
             // Enter key triggers search
             document.getElementById('searchInput').addEventListener('keypress', (e) => {
@@ -1144,6 +1369,14 @@
             const query = document.getElementById('searchInput').value.toLowerCase();
             
             let filtered = allData;
+
+            // Filter out cannabis if user has not opted in
+            if (!userSettings.cannabis_opt_in) {
+                filtered = filtered.filter(item => 
+                    item.species.toLowerCase() !== 'cannabis'
+                );
+                console.log('🚫 Cannabis filtered (user opt-out)');
+            }
 
             // Apply text search
             if (query) {
