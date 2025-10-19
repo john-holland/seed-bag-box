@@ -171,6 +171,9 @@ async fn main() {
         // Health check
         .route("/health", get(health_check))
         
+        // Root/index page
+        .route("/", get(index_page))
+        
         // PACT verification endpoint
         .route("/api/pact", get(pact_contracts))
         
@@ -194,6 +197,67 @@ async fn health_check() -> Json<serde_json::Value> {
         "service": "seed-box-bag-box-mock-api",
         "version": "0.1.0"
     }))
+}
+
+async fn index_page() -> axum::response::Html<String> {
+    axum::response::Html(format!(r#"
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🌱 Seed Box Bag Box - Mock API</title>
+    <style>
+        body {{ font-family: monospace; padding: 40px; background: #f5f5f5; }}
+        h1 {{ color: #009688; }}
+        .endpoint {{ background: #fff; padding: 15px; margin: 10px 0; border-left: 4px solid #009688; }}
+        .method {{ color: #00BCD4; font-weight: bold; }}
+        a {{ color: #009688; text-decoration: none; }}
+        a:hover {{ text-decoration: underline; }}
+    </style>
+</head>
+<body>
+    <h1>🔫 Seed Box Bag Box - Mock API Server</h1>
+    <p>Server is running! Here are the available endpoints:</p>
+    
+    <h2>📋 Meta</h2>
+    <div class="endpoint"><span class="method">GET</span> <a href="/health">/health</a> - Health check</div>
+    <div class="endpoint"><span class="method">GET</span> <a href="/api/pact">/api/pact</a> - PACT contracts</div>
+    
+    <h2>🔫 Scanner</h2>
+    <div class="endpoint"><span class="method">POST</span> /api/scan - Record barcode scan</div>
+    <div class="endpoint"><span class="method">GET</span> /api/scans - List scans</div>
+    
+    <h2>📦 Queue</h2>
+    <div class="endpoint"><span class="method">POST</span> /api/queue - Create queue item</div>
+    <div class="endpoint"><span class="method">GET</span> /api/queue - List queue</div>
+    
+    <h2>🧊 Storage</h2>
+    <div class="endpoint"><span class="method">POST</span> /api/storage/seeds - Store seed</div>
+    <div class="endpoint"><span class="method">GET</span> /api/storage/seeds - List storage</div>
+    
+    <h2>📸 Images</h2>
+    <div class="endpoint"><span class="method">POST</span> /images/request-upload - Request presigned URL</div>
+    <div class="endpoint"><span class="method">POST</span> /images/confirm-upload - Confirm upload</div>
+    <div class="endpoint"><span class="method">GET</span> /images/my-images - List my images</div>
+    <div class="endpoint"><span class="method">GET</span> /images/pending-moderation - Pending images</div>
+    
+    <h2>🌐 Web Interfaces</h2>
+    <p>Open these files in your browser (in the <code>web/</code> directory):</p>
+    <ul>
+        <li>🥑 <strong><a href="localhost:8080/onboarding.html">onboarding.html</a></strong> - Avocado Proletariat story</li>
+        <li>🌱 <strong><a href="localhost:8080/plant-lookup.html">plant-lookup.html</a></strong> - Search plants</li>
+        <li>⚙️ <strong><a href="localhost:8080/user-settings.html">user-settings.html</a></strong> - User preferences & cannabis opt-in</li>
+        <li>🔫 <strong><a href="localhost:8080/manufacturing-queue.html">manufacturing-queue.html</a></strong> - Scanner interface</li>
+        <li>📸 <strong><a href="localhost:8080/my-images.html">my-images.html</a></strong> - Upload photos</li>
+        <li>✅ <strong><a href="localhost:8080/image-moderation.html">image-moderation.html</a></strong> - Moderate photos</li>
+        <li>⚠️ <strong><a href="localhost:8080/recall-moderation.html">recall-moderation.html</a></strong> - Food safety recalls</li>
+    </ul>
+    
+    <p style="margin-top: 40px; color: #009688;">
+        <strong>Keep Portland Weird</strong> 🕷️🦇🐸💞
+    </p>
+</body>
+</html>
+    "#))
 }
 
 async fn handle_scan(
