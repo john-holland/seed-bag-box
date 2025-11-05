@@ -45,7 +45,11 @@ pub struct GerminationRecord {
     /// True plant indicators
     pub is_true_plant: bool, // True when true leaves have emerged
     pub is_autotrophic: bool, // True when photosynthesizing independently
+    
+    /// Edible parts indicators
     pub has_edible_fruit_potential: Option<bool>, // Whether this species bears edible fruit
+    pub has_edible_leaves_potential: Option<bool>, // Whether this species has edible leaves
+    pub has_edible_stalks_potential: Option<bool>, // Whether this species has edible stalks/stems
     
     /// Shipment information
     pub shipment_type: ShipmentType,

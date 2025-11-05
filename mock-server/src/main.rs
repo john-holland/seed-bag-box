@@ -243,13 +243,13 @@ async fn index_page() -> axum::response::Html<String> {
     <h2>🌐 Web Interfaces</h2>
     <p>Open these files in your browser (in the <code>web/</code> directory):</p>
     <ul>
-        <li>🥑 <strong><a href="localhost:8080/onboarding.html">onboarding.html</a></strong> - Avocado Proletariat story</li>
-        <li>🌱 <strong><a href="localhost:8080/plant-lookup.html">plant-lookup.html</a></strong> - Search plants</li>
-        <li>⚙️ <strong><a href="localhost:8080/user-settings.html">user-settings.html</a></strong> - User preferences & cannabis opt-in</li>
-        <li>🔫 <strong><a href="localhost:8080/manufacturing-queue.html">manufacturing-queue.html</a></strong> - Scanner interface</li>
-        <li>📸 <strong><a href="localhost:8080/my-images.html">my-images.html</a></strong> - Upload photos</li>
-        <li>✅ <strong><a href="localhost:8080/image-moderation.html">image-moderation.html</a></strong> - Moderate photos</li>
-        <li>⚠️ <strong><a href="localhost:8080/recall-moderation.html">recall-moderation.html</a></strong> - Food safety recalls</li>
+        <li>🥑 <strong><a href="http://localhost:8080/onboarding.html">onboarding.html</a></strong> - Avocado Proletariat story</li>
+        <li>🌱 <strong><a href="http://localhost:8080/plant-lookup.html">plant-lookup.html</a></strong> - Search plants</li>
+        <li>⚙️ <strong><a href="http://localhost:8080/user-settings.html">user-settings.html</a></strong> - User preferences & cannabis opt-in</li>
+        <li>🔫 <strong><a href="http://localhost:8080/manufacturing-queue.html">manufacturing-queue.html</a></strong> - Scanner interface</li>
+        <li>📸 <strong><a href="http://localhost:8080/my-images.html">my-images.html</a></strong> - Upload photos</li>
+        <li>✅ <strong><a href="http://localhost:8080/image-moderation.html">image-moderation.html</a></strong> - Moderate photos</li>
+        <li>⚠️ <strong><a href="http://localhost:8080/recall-moderation.html">recall-moderation.html</a></strong> - Food safety recalls</li>
     </ul>
     
     <p style="margin-top: 40px; color: #009688;">

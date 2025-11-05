@@ -59,7 +59,12 @@ pub struct Seed {
     pub status: SeedStatus,
     pub germination_tested: bool,
     pub germination_rate: Option<f32>,
+    
+    /// Edible parts indicators
     pub is_edible_fruit_bearing: Option<bool>,
+    pub has_edible_leaves: Option<bool>,
+    pub has_edible_stalks: Option<bool>,
+    
     pub contamination_check: Option<ContaminationCheck>,
     pub notes: Option<String>,
 }
